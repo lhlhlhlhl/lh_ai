@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        //循环 有花括号 是一个代码片段 块级作用域
+        //十个块级作用域，每一个都是一个独立的作用域
+        for(var i=0;i<10;i++){
+            setTimeout(()=>{
+                console.log(i)
+            },1000)//10秒后打印10次10
+        }
+        for(let i=0;i<10;i++){
+            setTimeout(()=>{
+                console.log(i)
+            },1000)//10秒后打印1,2,...10
+        }
+    </script>
+    
+</body>
+</html>

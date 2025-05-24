@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>电商APP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+theme: {
+extend: {
+colors: {
+primary: '#FF4D4F',
+secondary: '#FF9C9D'
+},
+borderRadius: {
+'none': '0px',
+'sm': '2px',
+'DEFAULT': '4px',
+'md': '8px',
+'lg': '12px',
+'xl': '16px',
+'2xl': '20px',
+'3xl': '24px',
+'full': '9999px',
+'button': '4px'
+}
+}
+}
+}
+</script>
+<style>
+body {
+width: 375px;
+min-height: 762px;
+margin: 0 auto;
+background: #FFFFFF;
+position: relative;
+}
+.tab-icon {
+width: 24px;
+height: 24px;
+display: flex;
+justify-content: center;
+align-items: center;
+}
+.badge {
+position: absolute;
+top: -4px;
+right: -4px;
+min-width: 16px;
+height: 16px;
+padding: 0 4px;
+border-radius: 8px;
+background-color: #FF4D4F;
+color: white;
+font-size: 10px;
+display: flex;
+align-items: center;
+justify-content: center;
+}
+</style>
+</head>
+<body>
+<div class="fixed top-0 left-0 right-0 h-12 bg-white border-b border-gray-100 flex items-center px-4 z-50">
+<div class="font-['Pacifico'] text-xl text-primary">logo</div>
+<div class="flex-1 mx-4">
+<div class="flex items-center bg-gray-50 rounded-full px-4 py-1">
+<i class="fas fa-search text-gray-400 mr-2"></i>
+<input type="text" placeholder="搜索商品" class="bg-transparent w-full text-sm border-none outline-none">
+</div>
+</div>
+<i class="fas fa-bell text-gray-600"></i>
+</div>
+<div class="mt-12 mb-16">
+<div class="relative w-full h-40 overflow-hidden">
+<img src="https://ai-public.mastergo.com/ai/img_res/cd1959ff0869e8f04df63f69e0e9f11b.jpg"
+class="w-full h-full object-cover" alt="Banner">
+</div>
+<div class="grid grid-cols-5 gap-4 px-4 py-6">
+<div class="flex flex-col items-center">
+<div class="w-12 h-12 rounded-lg overflow-hidden mb-2">
+<img src="https://ai-public.mastergo.com/ai/img_res/9ca04b58dba2f28a72b1c96551e03ccb.jpg" class="w-full h-full object-cover">
+</div>
+<span class="text-xs text-gray-600 whitespace-nowrap overflow-hidden text-overflow-ellipsis">限时特惠</span>
+</div>
+<div class="flex flex-col items-center">
+<div class="w-12 h-12 rounded-lg overflow-hidden mb-2">
+<img src="https://ai-public.mastergo.com/ai/img_res/7138ec7ed0aa126640018ad24b0332e4.jpg" class="w-full h-full object-cover">
+</div>
+<span class="text-xs text-gray-600 whitespace-nowrap overflow-hidden text-overflow-ellipsis">新人福利</span>
+</div>
+<div class="flex flex-col items-center">
+<div class="w-12 h-12 rounded-lg overflow-hidden mb-2">
+<img src="https://ai-public.mastergo.com/ai/img_res/89dd6687c3f5b96ecdcce3c163575ec6.jpg" class="w-full h-full object-cover">
+</div>
+<span class="text-xs text-gray-600 whitespace-nowrap overflow-hidden text-overflow-ellipsis">品牌特卖</span>
+</div>
+<div class="flex flex-col items-center">
+<div class="w-12 h-12 rounded-lg overflow-hidden mb-2">
+<img src="https://ai-public.mastergo.com/ai/img_res/f245fdb899d1004469e23b3e6cce7436.jpg" class="w-full h-full object-cover">
+</div>
+<span class="text-xs text-gray-600 whitespace-nowrap overflow-hidden text-overflow-ellipsis">优惠券</span>
+</div>
+<div class="flex flex-col items-center">
+<div class="w-12 h-12 rounded-lg overflow-hidden mb-2">
+<img src="https://ai-public.mastergo.com/ai/img_res/e831e092687814835da5c19fde939ab6.jpg" class="w-full h-full object-cover">
+</div>
+<span class="text-xs text-gray-600 whitespace-nowrap overflow-hidden text-overflow-ellipsis">会员专区</span>
+</div>
+</div>
+<div class="px-4">
+<h2 class="text-lg font-medium mb-4">热门商品</h2>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-white rounded-lg shadow-sm overflow-hidden">
+<div class="aspect-square overflow-hidden">
+<img src="https://ai-public.mastergo.com/ai/img_res/ff374d4dd2c4963bb0ba4be94ed42204.jpg" class="w-full h-full object-cover">
+</div>
+<div class="p-3">
+<h3 class="text-sm font-medium mb-1">奢华真皮手提包</h3>
+<p class="text-xs text-gray-500 mb-2">经典设计 | 高端品质</p>
+<div class="flex items-center justify-between">
+<span class="text-primary text-lg font-medium">¥1,299</span>
+<span class="text-xs text-gray-400">已售 2.3k</span>
+</div>
+</div>
+</div>
+<div class="bg-white rounded-lg shadow-sm overflow-hidden">
+<div class="aspect-square overflow-hidden">
+<img src="https://ai-public.mastergo.com/ai/img_res/097781d7bfdd49ba72a8470985d6de37.jpg" class="w-full h-full object-cover">
+</div>
+<div class="p-3">
+<h3 class="text-sm font-medium mb-1">瑞士品牌腕表</h3>
+<p class="text-xs text-gray-500 mb-2">精密机芯 | 优雅设计</p>
+<div class="flex items-center justify-between">
+<span class="text-primary text-lg font-medium">¥2,499</span>
+<span class="text-xs text-gray-400">已售 1.8k</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="fixed bottom-0 left-0 right-0 h-14 bg-white border-t border-gray-100 grid grid-cols-5 items-center z-50">
+<div class="flex flex-col items-center">
+<div class="tab-icon text-primary">
+<i class="fas fa-home"></i>
+</div>
+<span class="text-xs text-primary">首页</span>
+</div>
+<div class="flex flex-col items-center">
+<div class="tab-icon text-gray-400">
+<i class="fas fa-play"></i>
+</div>
+<span class="text-xs text-gray-400">视频</span>
+</div>
+<div class="flex flex-col items-center">
+<div class="tab-icon text-gray-400 relative">
+<i class="fas fa-comment"></i>
+<div class="badge">12</div>
+</div>
+<span class="text-xs text-gray-400">消息</span>
+</div>
+<div class="flex flex-col items-center">
+<div class="tab-icon text-gray-400 relative">
+<i class="fas fa-shopping-bag"></i>
+<div class="badge">3</div>
+</div>
+<span class="text-xs text-gray-400">购物</span>
+</div>
+<div class="flex flex-col items-center">
+<div class="tab-icon text-gray-400">
+<i class="fas fa-user"></i>
+</div>
+<span class="text-xs text-gray-400">我的</span>
+</div>
+</div>
+</body>
+</html>
