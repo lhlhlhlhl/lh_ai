@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <ul id="friends"></ul>
+    <script>
+        //JSON数组
+        //数据
+        const friends =[
+            {name:'娄欢',hometown:'抚州'},
+            {name:'王心志',hometown:'南昌'},
+            {name:'王耀',hometown:'赣州'},
+        ]
+        //DOM编程
+        const ul = document.getElementById('friends')
+        //全新的循环，可以不需要index for of 更语义化
+        // for(let friend of friends){
+        //     // const li = document.createElement('li')
+        //     // li.textContent = friends[i].name + '来自'+friends[i].hometown
+        //     // ul.appendChild(li)
+        //     // const friend=friends[i]
+        //     ul.innerHTML += `
+        //     <li>${friend.name}来自
+        //     <i>${friend.hometown}</i>
+        //     </li>
+        //     `
+        // }
+
+        // es6 forEach升级版
+        // 迭代数组的每一项，回调函数的参数是数组的每一项
+        // 返回数组
+        // ul.innerHTML=friends.map(function(friend){
+        //    //console.log(friend)
+        //    return `
+        //    <li>
+        //    ${friend.name}来自
+        //    <i>${friend.hometown}</i>
+        //    </li>
+        //    `
+        // }).join('')
+
+        //箭头函数
+        ul.innerHTML=friends.map(friend=>
+           //console.log(friend)
+            `
+           <li>
+           ${friend.name}来自
+           <i>${friend.hometown}</i>
+           </li>
+           `
+        ).join('')
+    </script>
+</body>
+</html>
