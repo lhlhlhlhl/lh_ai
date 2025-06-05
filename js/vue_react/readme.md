@@ -45,4 +45,7 @@ table
         }
         - tr v-for 配合循环输出业务
 
+## react 来自于FaceBook  适合大型应用
+- 创建一个react 应用
+   -npm init vite
 

@@ -1,6 +1,6 @@
 function bar() {
     var myName = "极客世界"
-    let test1 = 100
+    let test = 5
     if (1) {
         let myName = "Chrome浏览器"
         console.log(test)
