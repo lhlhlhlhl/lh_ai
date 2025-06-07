@@ -25,3 +25,20 @@
 
 - LLM AI时代
 fetch 取来大模型的能力 智能前端
+
+## http 请求
+  - 请求行：请求方法 请求地址 请求协议
+  POST https://api.deepseek.com/chat/completions
+  - 请求头
+    设置各种头部信息
+    {
+      "Content-Type": "application/json"
+      "Authorization": "Bearer sk-xxxxx" 请求凭证
+    }
+  - 请求体
+    发送给服务器的数据 GET请求没有请求体
+    POST 可以有请求体（网络 fetch 标头和载荷处可以查看）
+    {
+      "model": "deepseek-ai/deepseek-coder-6.7b-instruct",
+      "messages": [{"role": "user", "content": "你好"}]
+    }
