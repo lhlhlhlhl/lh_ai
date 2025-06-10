@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emoji Mixer - 表情混合创作工具</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- 顶部导航栏 -->
+  <header class="header">
+    <div class="container header-container">
+      <h1 class="logo">
+        <i class="fa fa-paint-brush"></i>Emoji Mixer
+      </h1>
+      <div class="header-buttons">
+        <button id="save-btn" class="btn btn-primary">
+          <i class="fa fa-download"></i>保存
+        </button>
+        <button id="share-btn" class="btn btn-secondary">
+          <i class="fa fa-share-alt"></i>分享
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container main-container">
+    <div class="grid">
+      <!-- 左侧工具栏 -->
+      <div class="sidebar">
+        <!-- 表情库标签页 -->
+        <div class="tabs">
+          <button class="tab active" data-tab="emoji">Emoji库</button>
+          <button class="tab" data-tab="accessory">配饰库</button>
+          <button class="tab" data-tab="combine">组合工具</button>
+        </div>
+        
+        <!-- Emoji库 -->
+        <div id="emoji-library" class="tab-content active">
+          <div class="emoji-category">
+            <h3>笑脸与表情</h3>
+            <div class="emoji-grid" id="smileys"></div>
+          </div>
+          <div class="emoji-category">
+            <h3>人物</h3>
+            <div class="emoji-grid" id="people"></div>
+          </div>
+          <div class="emoji-category">
+            <h3>动物</h3>
+            <div class="emoji-grid" id="animals"></div>
+          </div>
+        </div>
+        
+        <!-- 配饰库 -->
+        <div id="accessory-library" class="tab-content">
+          <div class="emoji-category">
+            <h3>流泪/流汗</h3>
+            <div class="emoji-grid" id="tears"></div>
+          </div>
+          <div class="emoji-category">
+            <h3>身体部位</h3>
+            <div class="emoji-grid" id="body"></div>
+          </div>
+          <div class="emoji-category">
+            <h3>爱心</h3>
+            <div class="emoji-grid" id="hearts"></div>
+          </div>
+          <div class="emoji-category">
+            <h3>花朵</h3>
+            <div class="emoji-grid" id="flowers"></div>
+          </div>
+        </div>
+        
+        <!-- 组合工具 -->
+        <div id="combine-tools" class="tab-content">
+          <div class="combine-header">
+            <h3>表情组合</h3>
+            <button id="auto-combine-btn" class="btn btn-accent">
+              <i class="fa fa-magic"></i>自动生成
+            </button>
+          </div>
+          
+          <div class="combine-container">
+            <div class="combine-box" id="combine-box-1">
+              <div class="placeholder">拖入第一个表情</div>
+            </div>
+            <div class="combine-plus">+</div>
+            <div class="combine-box" id="combine-box-2">
+              <div class="placeholder">拖入第二个表情</div>
+            </div>
+            <div class="combine-equal">=</div>
+            <div class="combine-result" id="combine-result">
+              <div class="placeholder">生成结果</div>
+            </div>
+          </div>
+          
+          <div class="combine-controls">
+            <button id="combine-btn" class="btn btn-primary">
+              <i class="fa fa-object-group"></i>组合表情
+            </button>
+            <button id="clear-combine-btn" class="btn">
+              <i class="fa fa-trash"></i>清空
+            </button>
+          </div>
+        </div>
+        
+        <!-- 画笔工具 -->
+        <div class="tool-section">
+          <h2 class="section-title">绘画工具</h2>
+          <div class="tool-buttons">
+            <button id="brush-btn" class="tool-btn tool-active">
+              <i class="fa fa-paint-brush"></i>画笔
+            </button>
+            <button id="eraser-btn" class="tool-btn">
+              <i class="fa fa-eraser"></i>橡皮擦
+            </button>
+          </div>
+          
+          <div class="tool-control">
+            <label>画笔大小</label>
+            <input id="brush-size" type="range" min="1" max="20" value="5">
+          </div>
+          
+          <div class="tool-control">
+            <label>画笔颜色</label>
+            <div class="color-palette">
+              <button class="color-btn active" data-color="#000000"></button>
+              <button class="color-btn" data-color="#EF4444"></button>
+              <button class="color-btn" data-color="#3B82F6"></button>
+              <button class="color-btn" data-color="#10B981"></button>
+              <button class="color-btn" data-color="#F59E0B"></button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 预设背景 -->
+        <div class="tool-section">
+          <h2 class="section-title">背景模板</h2>
+          <div class="bg-grid">
+            <div class="bg-item active" data-bg="canvas">
+              <span>画布</span>
+            </div>
+            <div class="bg-item" data-bg="gradient1"></div>
+            <div class="bg-item" data-bg="gradient2"></div>
+            <div class="bg-item" data-bg="gray">
+              <span>灰色</span>
+            </div>
+            <div class="bg-item" data-bg="lined">
+              <span>线条</span>
+            </div>
+            <div class="bg-item" data-bg="dotted">
+              <span>点状</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 中间画布区域 -->
+      <div class="canvas-area">
+        <div class="canvas-header">
+          <h2 class="section-title">创作画布</h2>
+          <div class="canvas-controls">
+            <button id="zoom-out-btn" class="icon-btn">
+              <i class="fa fa-search-minus"></i>
+            </button>
+            <div id="zoom-display" class="zoom-display">100%</div>
+            <button id="zoom-in-btn" class="icon-btn">
+              <i class="fa fa-search-plus"></i>
+            </button>
+            <button id="reset-zoom-btn" class="icon-btn">
+              <i class="fa fa-refresh"></i>
+            </button>
+            <button id="clear-btn" class="btn">
+              <i class="fa fa-trash-o"></i>清空
+            </button>
+            <button id="undo-btn" class="btn">
+              <i class="fa fa-undo"></i>撤销
+            </button>
+            <button id="crop-btn" class="btn">
+              <i class="fa fa-crop"></i>裁剪
+            </button>
+          </div>
+        </div>
+        
+        <!-- 画布容器 -->
+        <div class="canvas-container">
+          <canvas id="main-canvas"></canvas>
+          
+          <!-- 拖拽预览 -->
+          <div id="drag-preview" class="drag-preview"></div>
+          
+          <!-- 裁剪工具 -->
+          <div id="crop-overlay" class="crop-overlay">
+            <div id="crop-box" class="crop-box">
+              <div class="crop-handle crop-handle-nw"></div>
+              <div class="crop-handle crop-handle-ne"></div>
+              <div class="crop-handle crop-handle-sw"></div>
+              <div class="crop-handle crop-handle-se"></div>
+            </div>
+          </div>
+          
+          <!-- 操作提示 -->
+          <div id="canvas-guide" class="canvas-guide">
+            <p>拖动左侧表情到画布上</p>
+            <p>或使用画笔工具自由创作</p>
+          </div>
+        </div>
+        
+        <!-- 操作指南 -->
+        <div class="canvas-tips">
+          <p>
+            <i class="fa fa-lightbulb-o"></i>
+            提示：拖动表情到画布上可添加元素，双击元素可删除，使用画笔工具可自由绘制。
+            <span>选中元素后：使用鼠标滚轮调整大小，按住Alt+拖动旋转，点击裁剪按钮进行裁剪</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 保存成功提示 -->
+  <div id="save-toast" class="save-toast">
+    <i class="fa fa-check-circle"></i>
+    <span>表情已保存到相册</span>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <p>© 2023 Emoji Mixer - 释放你的创意</p>
+      <p>使用HTML, CSS和JavaScript构建的表情创作工具</p>
+    </div>
+  </footer>
+
+  <!-- 引入FontAwesome图标库 -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <!-- 引入JavaScript -->
+  <script src="script.js"></script>
+</body>
+</html>
+
