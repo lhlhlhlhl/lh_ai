@@ -18,11 +18,11 @@ app.get('/', (req, res) => {
 // 添加一个支持server push 的路由
 app.get('/sse', (req, res) => {
   //支持server push 不断的服务器端推送 少量的 
-  // 响应头
+  // 设置响应头
   res.set({
     // steam 文本流， 事件
-    'Content-Type': 'text/event-stream',
-    'Cache-Control': 'no-cache',
+    'Content-Type': 'text/event-stream',//文档的类型，是文本流
+    'Cache-Control': 'no-cache',//禁止前端使用缓存
     'Connection': 'keep-alive',// 保持连接
   })
   res.flushHeaders();
