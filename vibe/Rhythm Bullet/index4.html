@@ -1,0 +1,1764 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>节奏弹道（Rhythm Bullet）</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366F1',
+                        secondary: '#EC4899',
+                        accent: '#8B5CF6',
+                        dark: '#1E1B4B',
+                        light: '#EEF2FF',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .pixel-pulse {
+                animation: pixelPulse 0.3s ease-in-out;
+            }
+            .glow {
+                filter: drop-shadow(0 0 8px currentColor);
+            }
+            .scale-in {
+                animation: scaleIn 0.5s ease-out forwards;
+            }
+            .fade-in {
+                animation: fadeIn 0.8s ease-out forwards;
+            }
+            .float {
+                animation: float 3s ease-in-out infinite;
+            }
+            .note-bounce {
+                animation: noteBounce 0.6s ease-out;
+            }
+            .reward-popup {
+                animation: rewardPopup 2s ease-out forwards;
+            }
+            @keyframes pixelPulse {
+                0%, 100% { transform: scale(1); }
+                50% { transform: scale(1.1); }
+            }
+            @keyframes scaleIn {
+                from { transform: scale(0.8); opacity: 0; }
+                to { transform: scale(1); opacity: 1; }
+            }
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+            @keyframes float {
+                0%, 100% { transform: translateY(0); }
+                50% { transform: translateY(-10px); }
+            }
+            @keyframes noteBounce {
+                0% { transform: scale(1) translateY(0); }
+                30% { transform: scale(1.3) translateY(-15px); }
+                60% { transform: scale(1.1) translateY(-5px); }
+                100% { transform: scale(1) translateY(0); }
+            }
+            @keyframes rewardPopup {
+                0% { 
+                    opacity: 0; 
+                    transform: translateX(-50%) translateY(-50%) scale(0.5); 
+                }
+                20% { 
+                    opacity: 1; 
+                    transform: translateX(-50%) translateY(-50%) scale(1.2); 
+                }
+                80% { 
+                    opacity: 1; 
+                    transform: translateX(-50%) translateY(-50%) scale(1); 
+                }
+                100% { 
+                    opacity: 0; 
+                    transform: translateX(-50%) translateY(-50%) scale(0.8); 
+                }
+            }
+            .visualizer-bar {
+                transition: height 0.1s ease-out;
+            }
+            .game-container {
+                background: linear-gradient(135deg, #1E1B4B 0%, #0f172a 100%);
+            }
+            .music-btn {
+                transition: all 0.3s ease;
+            }
+            .music-btn:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+            }
+            .player-ship {
+                position: relative;
+                z-index: 20;
+            }
+            .player-ship::after {
+                content: '';
+                position: absolute;
+                bottom: -15px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 40px;
+                height: 10px;
+                background: rgba(99, 102, 241, 0.4);
+                border-radius: 50%;
+                filter: blur(5px);
+                animation: enginePulse 1s infinite alternate;
+            }
+            @keyframes enginePulse {
+                from { opacity: 0.3; transform: translateX(-50%) scale(0.8); }
+                to { opacity: 0.8; transform: translateX(-50%) scale(1.2); }
+            }
+            .beat-indicator {
+                transition: all 0.3s ease;
+            }
+            .beat-active {
+                transform: scale(1.2);
+                background: #6366F1;
+                box-shadow: 0 0 15px rgba(99, 102, 241, 0.8);
+            }
+            .control-btn {
+                transition: all 0.2s ease;
+            }
+            .control-btn:active {
+                transform: scale(0.95);
+                background-color: #4F46E5;
+            }
+        }
+    </style>
+</head>
+<body class="bg-dark overflow-hidden font-sans">
+    <div id="game-container" class="relative w-full h-screen flex flex-col items-center justify-center game-container">
+        <!-- 游戏开始界面 -->
+        <div id="start-screen" class="absolute inset-0 z-50 flex flex-col items-center justify-center bg-dark/95 p-6 fade-in">
+            <div class="text-center mb-8">
+                <h1 class="text-[clamp(2.5rem,8vw,5rem)] font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary mb-2 scale-in">
+                    节奏弹道
+                </h1>
+                <p class="text-xl md:text-2xl text-center max-w-2xl mb-4 text-light/80">
+                    跟随音乐节奏移动和射击，同步节拍触发伤害加成！
+                </p>
+                <div class="h-1 w-24 bg-gradient-to-r from-primary to-secondary rounded-full mx-auto mt-4"></div>
+            </div>
+            
+            <div class="flex flex-col sm:flex-row gap-4 mb-8 scale-in">
+                <button id="start-btn" class="px-8 py-4 bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white rounded-xl text-lg font-semibold transition-all transform hover:scale-105 hover:shadow-lg flex items-center justify-center gap-2 shadow-lg">
+                    <i class="fa fa-play"></i> 开始游戏
+                </button>
+            </div>
+            
+            <div class="w-full max-w-3xl bg-dark/50 border border-light/10 rounded-2xl p-6 mt-4 scale-in">
+                <h3 class="text-xl font-bold text-light mb-4 text-center">选择游戏音乐</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <button data-music="https://audio.jukehost.co.uk/ct4VdYhU1kGj8QvFkLbD4F6bUwFQJXhR" 
+                            class="music-selector music-btn px-4 py-3 bg-dark/70 border border-primary/30 hover:border-primary rounded-xl text-light transition-all flex flex-col items-center gap-2 selected border-primary">
+                        <i class="fa fa-music text-primary text-xl"></i>
+                        <span>电子节奏</span>
+                        <span class="text-xs text-light/60">120 BPM</span>
+                    </button>
+                    <button data-music="https://audio.jukehost.co.uk/8SqEe6rW9gqX5V9Yf2nJhM5g5XyFpR5q" 
+                            class="music-selector music-btn px-4 py-3 bg-dark/70 border border-light/20 hover:border-primary rounded-xl text-light transition-all flex flex-col items-center gap-2">
+                        <i class="fa fa-music text-secondary text-xl"></i>
+                        <span>动感舞曲</span>
+                        <span class="text-xs text-light/60">140 BPM</span>
+                    </button>
+                    <button data-music="https://audio.jukehost.co.uk/1t7i6q9Gt1K8g8y9Q2u9dD0z8H1F3a8f" 
+                            class="music-selector music-btn px-4 py-3 bg-dark/70 border border-light/20 hover:border-primary rounded-xl text-light transition-all flex flex-col items-center gap-2">
+                        <i class="fa fa-music text-accent text-xl"></i>
+                        <span>复古迪斯科</span>
+                        <span class="text-xs text-light/60">128 BPM</span>
+                    </button>
+                </div>
+                
+                <div class="grid grid-cols-1 gap-4 mb-4">
+                    <button class="music-selector music-btn px-4 py-3 bg-dark/70 border border-light/20 hover:border-primary rounded-xl text-light transition-all flex items-center justify-center gap-2" 
+                            data-music="demo">
+                        <i class="fa fa-play-circle text-light/80"></i>
+                        <span>演示模式（无音乐）</span>
+                    </button>
+                </div>
+                
+                <div class="text-center mt-6">
+                    <label for="music-upload" class="px-6 py-3 bg-gradient-to-r from-accent to-secondary hover:from-accent/90 hover:to-secondary/90 text-white rounded-xl text-sm cursor-pointer transition-all inline-flex items-center gap-2 shadow-md">
+                        <i class="fa fa-cloud-upload"></i> 上传音乐文件
+                    </label>
+                    <input type="file" id="music-upload" accept="audio/*" class="hidden">
+                    <p class="text-xs text-light/50 mt-3">支持 MP3, WAV, OGG 等格式</p>
+                </div>
+            </div>
+            
+            <div class="mt-8 text-center text-light/50 text-sm">
+                <p>使用方向键移动，空格键射击，X键释放特殊技能</p>
+                <p class="mt-1">同步节奏射击可获得伤害加成！</p>
+            </div>
+        </div>
+
+        <!-- 游戏界面 -->
+        <div id="game-ui" class="absolute inset-0 z-40 hidden">
+            <div class="absolute top-4 left-4 flex gap-4">
+                <div class="bg-dark/70 backdrop-blur-sm px-4 py-2 rounded-xl flex items-center gap-2">
+                    <div class="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+                    <span class="text-light font-bold">生命:</span>
+                    <span id="health-display" class="text-primary font-bold text-xl">3</span>
+                </div>
+                
+                <div class="bg-dark/70 backdrop-blur-sm px-4 py-2 rounded-xl flex items-center gap-2">
+                    <i class="fa fa-star text-yellow-400"></i>
+                    <span class="text-light">分数:</span>
+                    <span id="score-display" class="text-yellow-400 font-bold">0</span>
+                </div>
+                
+                <div class="bg-dark/70 backdrop-blur-sm px-4 py-2 rounded-xl flex items-center gap-2">
+                    <i class="fa fa-bolt text-blue-400"></i>
+                    <span class="text-light">连击:</span>
+                    <span id="combo-display" class="text-secondary font-bold">x1</span>
+                </div>
+            </div>
+            
+            <div class="absolute top-4 right-4">
+                <button id="pause-btn" class="bg-dark/70 backdrop-blur-sm p-3 rounded-xl text-light hover:bg-primary/30 transition-all">
+                    <i class="fa fa-pause"></i>
+                </button>
+            </div>
+            
+            <div class="absolute bottom-4 left-0 right-0 flex justify-center">
+                <div class="bg-dark/70 backdrop-blur-sm px-6 py-3 rounded-xl">
+                    <div class="flex items-center gap-4">
+                        <div class="w-32">
+                            <div class="text-light text-sm mb-1">能量槽</div>
+                            <div class="h-3 bg-dark/80 rounded-full overflow-hidden">
+                                <div id="energy-fill" class="h-full bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full" style="width: 0%"></div>
+                            </div>
+                            <div id="energy-text" class="text-xs text-light/70 mt-1 text-center">0%</div>
+                        </div>
+                        
+                        <div id="beat-indicator" class="beat-indicator w-12 h-12 rounded-full bg-primary/30 flex items-center justify-center">
+                            <i class="fa fa-music text-light"></i>
+                        </div>
+                        
+                        <div class="text-center">
+                            <div class="text-light text-sm mb-1">节奏</div>
+                            <div id="bpm-display" class="text-xl font-bold text-light">120</div>
+                            <div class="text-xs text-light/70">BPM</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 移动端控制按钮 -->
+            <div class="absolute bottom-24 left-0 right-0 flex justify-between px-6 md:hidden">
+                <button id="left-btn" class="control-btn w-16 h-16 rounded-full bg-dark/70 border-2 border-primary/50 flex items-center justify-center">
+                    <i class="fa fa-arrow-left text-2xl text-light"></i>
+                </button>
+                <button id="shoot-btn" class="control-btn w-16 h-16 rounded-full bg-dark/70 border-2 border-secondary/50 flex items-center justify-center">
+                    <i class="fa fa-bullseye text-2xl text-light"></i>
+                </button>
+                <button id="right-btn" class="control-btn w-16 h-16 rounded-full bg-dark/70 border-2 border-primary/50 flex items-center justify-center">
+                    <i class="fa fa-arrow-right text-2xl text-light"></i>
+                </button>
+                <button id="special-btn" class="control-btn w-16 h-16 rounded-full bg-dark/70 border-2 border-accent/50 flex items-center justify-center">
+                    <i class="fa fa-bolt text-2xl text-light"></i>
+                </button>
+            </div>
+            
+            <div id="rhythm-note" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full bg-yellow-400/30 flex items-center justify-center opacity-30 transition-all duration-300 pointer-events-none">
+                <i class="fa fa-music text-yellow-300 text-2xl"></i>
+            </div>
+            
+            <div id="reward-popup" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-3xl font-bold text-yellow-300 pointer-events-none opacity-0">
+                <div>PERFECT!</div>
+            </div>
+            
+            <div id="feedback-message" class="absolute top-1/3 left-1/2 transform -translate-x-1/2 text-xl font-bold text-yellow-300 opacity-0 transition-opacity">
+                完美节奏！
+            </div>
+        </div>
+
+        <!-- 游戏画布 -->
+        <canvas id="game-canvas" class="absolute inset-0 z-10 w-full h-full"></canvas>
+        
+        <!-- 暂停菜单 -->
+        <div id="pause-menu" class="absolute inset-0 z-50 flex flex-col items-center justify-center bg-dark/80 backdrop-blur-sm p-6 hidden fade-in">
+            <div class="bg-dark/90 border border-light/10 rounded-2xl p-8 max-w-md w-full text-center">
+                <h2 class="text-3xl font-bold text-primary mb-6">游戏暂停</h2>
+                
+                <div class="flex flex-col gap-4">
+                    <button id="resume-btn" class="px-6 py-4 bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white rounded-xl text-lg font-semibold transition-all transform hover:scale-105 flex items-center justify-center gap-2">
+                        <i class="fa fa-play"></i> 继续游戏
+                    </button>
+                    <button id="restart-btn" class="px-6 py-4 bg-dark border-2 border-light/30 hover:border-light/60 text-light rounded-xl text-lg font-semibold transition-all transform hover:scale-105 flex items-center justify-center gap-2">
+                        <i class="fa fa-refresh"></i> 重新开始
+                    </button>
+                    <button id="quit-btn" class="px-6 py-4 bg-dark border-2 border-light/30 hover:border-light/60 text-light rounded-xl text-lg font-semibold transition-all transform hover:scale-105 flex items-center justify-center gap-2">
+                        <i class="fa fa-home"></i> 返回主菜单
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 游戏结束界面 -->
+        <div id="game-over-screen" class="absolute inset-0 z-50 flex flex-col items-center justify-center bg-dark/90 backdrop-blur-sm p-6 hidden fade-in">
+            <div class="bg-dark/90 border border-light/10 rounded-2xl p-8 max-w-md w-full text-center">
+                <h2 class="text-3xl font-bold text-secondary mb-2">游戏结束</h2>
+                <div class="h-1 w-24 bg-gradient-to-r from-primary to-secondary rounded-full mx-auto mb-6"></div>
+                
+                <div class="grid grid-cols-2 gap-4 mb-8">
+                    <div class="bg-dark/70 p-4 rounded-xl">
+                        <div class="text-light/70 text-sm mb-1">最终分数</div>
+                        <div id="final-score" class="text-3xl font-bold text-primary">0</div>
+                    </div>
+                    <div class="bg-dark/70 p-4 rounded-xl">
+                        <div class="text-light/70 text-sm mb-1">最高连击</div>
+                        <div id="max-combo" class="text-3xl font-bold text-secondary">x1</div>
+                    </div>
+                    <div class="bg-dark/70 p-4 rounded-xl">
+                        <div class="text-light/70 text-sm mb-1">节奏同步率</div>
+                        <div id="sync-rate" class="text-3xl font-bold text-cyan-400">100%</div>
+                    </div>
+                    <div class="bg-dark/70 p-4 rounded-xl">
+                        <div class="text-light/70 text-sm mb-1">游戏时间</div>
+                        <div id="game-time" class="text-3xl font-bold text-yellow-400">0:00</div>
+                    </div>
+                </div>
+                
+                <div class="flex flex-col gap-3">
+                    <button id="retry-btn" class="px-6 py-4 bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white rounded-xl text-lg font-semibold transition-all transform hover:scale-105 flex items-center justify-center gap-2">
+                        <i class="fa fa-refresh"></i> 重新挑战
+                    </button>
+                    <button id="menu-btn" class="px-6 py-4 bg-dark border-2 border-light/30 hover:border-light/60 text-light rounded-xl text-lg font-semibold transition-all transform hover:scale-105 flex items-center justify-center gap-2">
+                        <i class="fa fa-home"></i> 返回主菜单
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 更新云端音乐URL（使用可靠的音频托管服务）
+        const MUSIC_URLS = {
+            '电子节奏': 'https://er-sycdn.kuwo.cn/052fda4333e9d5e0793629c9a423e619/685bc254/resource/30106/trackmedia/M500000jJ2Kz4G3ZT7.mp3?bitrate$128&from=vip',
+            '动感舞曲': 'https://lv-sycdn.kuwo.cn/0c3f73d7c891ded46e10ee41ecd250a5/68557b9e/resource/30106/trackmedia/M500004Z8Ihr0JIu5s.mp3?bitrate$128&from=vip',
+            '复古迪斯科': 'https://ws6.stream.qqmusic.qq.com/O4000008MeTj3M2tiX.ogg?guid=1282893486&vkey=9C0E635FA0B6CCB00C57B13EB768E06A6A64713A895C2AFEC7D54B58C2FBADBDF537B5792F4E38C8087A0106D47FB99E3696B57A76395C7B__v2b9ab3ce&uin=1622803054&fromtag=120532&src=O400003WcFgq1J7DDn.ogg'
+        };
+        
+        // 游戏状态管理
+        const gameState = {
+            isRunning: false,
+            isPaused: false,
+            isOver: false,
+            health: 3,
+            score: 0,
+            combo: 1,
+            comboTimer: 0,
+            maxCombo: 1,
+            energy: 0,
+            difficulty: 1,
+            music: null,
+            audioContext: null,
+            analyser: null,
+            dataArray: null,
+            beatThreshold: 0.6,
+            lastBeatTime: 0,
+            beatInterval: 500,
+            beatDetected: false,
+            lastNote: 0,
+            syncHits: 0,
+            totalHits: 0,
+            currentMusic: null,
+            gameStartTime: 0,
+            bpm: 120,
+            audioFeatures: {
+                lowFreq: 0,
+                midFreq: 0,
+                highFreq: 0,
+                energy: 0,
+                spectralCentroid: 0
+            },
+            beatHistory: [],
+            adaptiveBeatThreshold: 0.6,
+            lastPowerUpSpawn: 0,
+            rhythmStreak: 0,
+            lastRhythmShot: 0
+        };
+
+        // 游戏配置
+        const config = {
+            playerSpeed: 15,
+            bulletSpeed: 10,
+            enemyMinSpeed: 0.8,
+            enemyMaxSpeed: 2.5,
+            playerSize: 30,
+            bulletSize: 8,
+            enemySize: 25,
+            enemySpawnRate: 1500,
+            lastEnemySpawn: 0,
+            energyGainPerHit: 2,
+            energyLossRate: 0.1,
+            comboTime: 3,
+            beatDetectionSensitivity: 30,
+            visualizerBars: 64,
+            visualizerBarWidth: 5,
+            visualizerBarMaxHeight: 100,
+            difficultyIncreaseRate: 45000,
+            beatDetectionWindow: 150,
+            powerUpSpawnRate: 30000,
+            frequencyBands: {
+                low: { start: 0, end: 85 },
+                mid: { start: 85, end: 255 },
+                high: { start: 255, end: 512 }
+            },
+            columns: 4,
+            columnWidth: 0,
+            columnBorders: []
+        };
+
+        // 游戏元素
+        const player = {
+            x: 0,
+            y: 0,
+            width: config.playerSize,
+            height: config.playerSize,
+            color: '#6366F1',
+            bullets: [],
+            lastShot: 0,
+            shotCooldown: 200,
+            isShooting: false,
+            currentColumn: 1
+        };
+
+        const enemies = [];
+        const enemyBullets = [];
+        const explosions = [];
+        const powerUps = [];
+        const particles = [];
+
+        // DOM 元素
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        const startScreen = document.getElementById('start-screen');
+        const gameUI = document.getElementById('game-ui');
+        const pauseMenu = document.getElementById('pause-menu');
+        const gameOverScreen = document.getElementById('game-over-screen');
+        const startBtn = document.getElementById('start-btn');
+        const pauseBtn = document.getElementById('pause-btn');
+        const resumeBtn = document.getElementById('resume-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const quitBtn = document.getElementById('quit-btn');
+        const retryBtn = document.getElementById('retry-btn');
+        const menuBtn = document.getElementById('menu-btn');
+        const healthDisplay = document.getElementById('health-display');
+        const scoreDisplay = document.getElementById('score-display');
+        const comboDisplay = document.getElementById('combo-display');
+        const energyFill = document.getElementById('energy-fill');
+        const energyText = document.getElementById('energy-text');
+        const beatIndicator = document.getElementById('beat-indicator');
+        const bpmDisplay = document.getElementById('bpm-display');
+        const rhythmNote = document.getElementById('rhythm-note');
+        const rewardPopup = document.getElementById('reward-popup');
+        const feedbackMessage = document.getElementById('feedback-message');
+        const finalScore = document.getElementById('final-score');
+        const maxCombo = document.getElementById('max-combo');
+        const syncRate = document.getElementById('sync-rate');
+        const gameTime = document.getElementById('game-time');
+        const musicSelectors = document.querySelectorAll('.music-selector');
+        const musicUpload = document.getElementById('music-upload');
+        
+        // 移动端控制按钮
+        const leftBtn = document.getElementById('left-btn');
+        const rightBtn = document.getElementById('right-btn');
+        const shootBtn = document.getElementById('shoot-btn');
+        const specialBtn = document.getElementById('special-btn');
+        
+        // 设置画布尺寸和四列系统
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            config.columnWidth = canvas.width / config.columns;
+            config.columnBorders = [];
+            for (let i = 0; i <= config.columns; i++) {
+                config.columnBorders.push(i * config.columnWidth);
+            }
+            
+            player.currentColumn = 1;
+            player.x = config.columnBorders[player.currentColumn] + config.columnWidth / 2 - player.width / 2;
+            player.y = canvas.height - 100;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // 键盘控制
+        const keys = {
+            left: false,
+            right: false,
+            shoot: false,
+            special: false
+        };
+
+        window.addEventListener('keydown', (e) => {
+            if (!gameState.isRunning || gameState.isPaused) return;
+            
+            if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') keys.left = true;
+            if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') keys.right = true;
+            if (e.key === ' ') {
+                e.preventDefault();
+                keys.shoot = true;
+            }
+            if (e.key === 'x' || e.key === 'X') {
+                e.preventDefault();
+                keys.special = true;
+            }
+            if (e.key === 'Escape' && gameState.isRunning) togglePause();
+        });
+
+        window.addEventListener('keyup', (e) => {
+            if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') keys.left = false;
+            if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') keys.right = false;
+            if (e.key === ' ') keys.shoot = false;
+            if (e.key === 'x' || e.key === 'X') keys.special = false;
+        });
+
+        // 移动端触摸控制
+        leftBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            keys.left = true;
+        });
+        
+        leftBtn.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            keys.left = false;
+        });
+        
+        rightBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            keys.right = true;
+        });
+        
+        rightBtn.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            keys.right = false;
+        });
+        
+        shootBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            keys.shoot = true;
+        });
+        
+        shootBtn.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            keys.shoot = false;
+        });
+        
+        specialBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            keys.special = true;
+        });
+        
+        specialBtn.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            keys.special = false;
+        });
+
+        // 获取列中心位置
+        function getColumnCenter(column) {
+            return config.columnBorders[column] + config.columnWidth / 2;
+        }
+
+        // 获取随机列
+        function getRandomColumn() {
+            return Math.floor(Math.random() * config.columns);
+        }
+
+        // 音频分析功能
+        function analyzeAudioFeatures() {
+            if (!gameState.analyser || !gameState.dataArray) return;
+            
+            gameState.analyser.getByteFrequencyData(gameState.dataArray);
+            
+            const bufferLength = gameState.analyser.frequencyBinCount;
+            const nyquist = gameState.audioContext.sampleRate / 2;
+            const freqPerBin = nyquist / bufferLength;
+            
+            let lowFreqEnergy = 0, midFreqEnergy = 0, highFreqEnergy = 0;
+            let totalEnergy = 0;
+            let spectralCentroid = 0;
+            let weightedSum = 0;
+            
+            for (let i = 0; i < bufferLength; i++) {
+                const freq = i * freqPerBin;
+                const magnitude = gameState.dataArray[i];
+                
+                totalEnergy += magnitude;
+                weightedSum += freq * magnitude;
+                
+                if (freq <= config.frequencyBands.low.end) {
+                    lowFreqEnergy += magnitude;
+                } else if (freq <= config.frequencyBands.mid.end) {
+                    midFreqEnergy += magnitude;
+                } else if (freq <= config.frequencyBands.high.end) {
+                    highFreqEnergy += magnitude;
+                }
+            }
+            
+            gameState.audioFeatures.lowFreq = lowFreqEnergy / (config.frequencyBands.low.end / freqPerBin);
+            gameState.audioFeatures.midFreq = midFreqEnergy / ((config.frequencyBands.mid.end - config.frequencyBands.low.end) / freqPerBin);
+            gameState.audioFeatures.highFreq = highFreqEnergy / ((config.frequencyBands.high.end - config.frequencyBands.mid.end) / freqPerBin);
+            gameState.audioFeatures.energy = totalEnergy / bufferLength;
+            gameState.audioFeatures.spectralCentroid = totalEnergy > 0 ? weightedSum / totalEnergy : 0;
+        }
+
+        // 自适应节拍检测
+        function detectBeat() {
+            if (!gameState.audioFeatures.energy) return false;
+            
+            const now = Date.now();
+            const timeSinceLastBeat = now - gameState.lastBeatTime;
+            
+            gameState.beatHistory.push(gameState.audioFeatures.energy);
+            if (gameState.beatHistory.length > 43) {
+                gameState.beatHistory.shift();
+                
+                const avgEnergy = gameState.beatHistory.reduce((a, b) => a + b) / gameState.beatHistory.length;
+                const variance = gameState.beatHistory.reduce((sum, val) => sum + Math.pow(val - avgEnergy, 2), 0) / gameState.beatHistory.length;
+                const stdDev = Math.sqrt(variance);
+                
+                gameState.adaptiveBeatThreshold = avgEnergy + stdDev * 1.5;
+            }
+            
+            const isEnergyPeak = gameState.audioFeatures.energy > gameState.adaptiveBeatThreshold;
+            const isTimingValid = timeSinceLastBeat > gameState.beatInterval * 0.5;
+            
+            if (isEnergyPeak && isTimingValid) {
+                if (gameState.lastBeatTime > 0) {
+                    const currentBPM = 60000 / timeSinceLastBeat;
+                    gameState.bpm = gameState.bpm * 0.9 + currentBPM * 0.1;
+                    gameState.beatInterval = 60000 / gameState.bpm;
+                }
+                
+                gameState.lastBeatTime = now;
+                return true;
+            }
+            
+            return false;
+        }
+
+        // 创建粒子效果
+        function createParticles(x, y, count, color) {
+            for (let i = 0; i < count; i++) {
+                particles.push({
+                    x: x + (Math.random() - 0.5) * 20,
+                    y: y + (Math.random() - 0.5) * 20,
+                    vx: (Math.random() - 0.5) * 8,
+                    vy: (Math.random() - 0.5) * 8,
+                    life: 30 + Math.random() * 20,
+                    maxLife: 30 + Math.random() * 20,
+                    color: color,
+                    size: 2 + Math.random() * 3
+                });
+            }
+        }
+
+        // 绘制四列边框
+        function drawColumnBorders() {
+            ctx.save();
+            ctx.strokeStyle = '#6366F1';
+            ctx.lineWidth = 2;
+            ctx.globalAlpha = 0.3;
+            
+            for (let i = 1; i < config.columns; i++) {
+                const x = config.columnBorders[i];
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+            }
+            
+            ctx.globalAlpha = 0.5;
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(0, canvas.height);
+            ctx.moveTo(canvas.width, 0);
+            ctx.lineTo(canvas.width, canvas.height);
+            ctx.stroke();
+            
+            ctx.restore();
+        }
+
+        // 绘制粒子
+        function drawParticle(particle) {
+            ctx.save();
+            const alpha = particle.life / particle.maxLife;
+            ctx.globalAlpha = alpha;
+            ctx.fillStyle = particle.color;
+            ctx.beginPath();
+            ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        }
+
+        // 绘制玩家
+        function drawPlayer() {
+            ctx.save();
+            ctx.fillStyle = player.color;
+            ctx.shadowColor = player.color;
+            ctx.shadowBlur = 15;
+            
+            // 绘制飞船主体
+            ctx.beginPath();
+            ctx.moveTo(player.x + player.width / 2, player.y);
+            ctx.lineTo(player.x, player.y + player.height);
+            ctx.lineTo(player.x + player.width / 4, player.y + player.height * 0.8);
+            ctx.lineTo(player.x + player.width * 0.75, player.y + player.height * 0.8);
+            ctx.lineTo(player.x + player.width, player.y + player.height);
+            ctx.closePath();
+            ctx.fill();
+            
+            // 绘制引擎火焰
+            if (keys.left || keys.right || keys.shoot) {
+                ctx.fillStyle = '#FF6B35';
+                ctx.beginPath();
+                ctx.moveTo(player.x + player.width / 3, player.y + player.height);
+                ctx.lineTo(player.x + player.width / 2, player.y + player.height + 12);
+                ctx.lineTo(player.x + player.width * 2/3, player.y + player.height);
+                ctx.closePath();
+                ctx.fill();
+            }
+            
+            ctx.restore();
+        }
+
+        // 绘制子弹
+        function drawBullet(bullet) {
+            ctx.save();
+            ctx.fillStyle = bullet.color;
+            ctx.shadowColor = bullet.color;
+            ctx.shadowBlur = 8;
+            
+            if (bullet.isSynced) {
+                // 节奏同步的子弹有特殊效果
+                ctx.beginPath();
+                ctx.arc(bullet.x + bullet.width / 2, bullet.y + bullet.height / 2, bullet.width / 2 + 2, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.strokeStyle = bullet.color;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(bullet.x + bullet.width / 2, bullet.y + bullet.height / 2, bullet.width / 2 + 5, 0, Math.PI * 2);
+                ctx.stroke();
+                
+                ctx.fillStyle = bullet.color + '66';
+                ctx.fillRect(bullet.x, bullet.y + bullet.height, bullet.width, bullet.height);
+            } else {
+                // 普通子弹
+                ctx.fillRect(bullet.x, bullet.y, bullet.width, bullet.height);
+            }
+            
+            ctx.restore();
+        }
+
+        // 绘制敌人
+        function drawEnemy(enemy) {
+            ctx.save();
+            ctx.fillStyle = enemy.color;
+            ctx.shadowColor = enemy.color;
+            ctx.shadowBlur = 8;
+            
+            if (enemy.type === 0) {
+                // 圆形敌人
+                ctx.beginPath();
+                ctx.arc(enemy.x + enemy.width / 2, enemy.y + enemy.height / 2, enemy.width / 2, 0, Math.PI * 2);
+                ctx.fill();
+            } else if (enemy.type === 1) {
+                // 三角形敌人
+                ctx.beginPath();
+                ctx.moveTo(enemy.x + enemy.width / 2, enemy.y + enemy.height);
+                ctx.lineTo(enemy.x, enemy.y);
+                ctx.lineTo(enemy.x + enemy.width, enemy.y);
+                ctx.closePath();
+                ctx.fill();
+            } else if (enemy.type === 2) {
+                // 方形敌人
+                ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
+                
+                // 绘制炮管
+                ctx.fillStyle = '#FF6B6B';
+                ctx.fillRect(enemy.x + enemy.width / 2 - 2, enemy.y + enemy.height - 5, 4, 5);
+            }
+            
+            // 绘制血条
+            if (enemy.health < enemy.maxHealth) {
+                const barWidth = enemy.width;
+                const barHeight = 3;
+                const healthPercent = enemy.health / enemy.maxHealth;
+                
+                ctx.fillStyle = '#333';
+                ctx.fillRect(enemy.x, enemy.y - 8, barWidth, barHeight);
+                
+                ctx.fillStyle = healthPercent > 0.5 ? '#4ADE80' : healthPercent > 0.25 ? '#FBBF24' : '#EF4444';
+                ctx.fillRect(enemy.x, enemy.y - 8, barWidth * healthPercent, barHeight);
+            }
+            
+            ctx.restore();
+        }
+
+        // 绘制敌人子弹
+        function drawEnemyBullet(bullet) {
+            ctx.save();
+            ctx.fillStyle = '#FF4444';
+            ctx.shadowColor = '#FF4444';
+            ctx.shadowBlur = 5;
+            ctx.fillRect(bullet.x, bullet.y, bullet.width, bullet.height);
+            ctx.restore();
+        }
+
+        // 绘制爆炸效果
+        function drawExplosion(explosion) {
+            ctx.save();
+            const alpha = explosion.life / explosion.maxLife;
+            ctx.globalAlpha = alpha;
+            
+            const gradient = ctx.createRadialGradient(
+                explosion.x, explosion.y, 0,
+                explosion.x, explosion.y, explosion.radius
+            );
+            gradient.addColorStop(0, '#FFD700');
+            gradient.addColorStop(0.5, '#FF6B35');
+            gradient.addColorStop(1, '#FF0000');
+            
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(explosion.x, explosion.y, explosion.radius * alpha, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.restore();
+        }
+
+        // 绘制道具
+        function drawPowerUp(powerUp) {
+            ctx.save();
+            ctx.fillStyle = powerUp.color;
+            ctx.shadowColor = powerUp.color;
+            ctx.shadowBlur = 15;
+            
+            ctx.translate(powerUp.x + powerUp.width / 2, powerUp.y + powerUp.height / 2);
+            ctx.rotate(powerUp.rotation);
+            
+            if (powerUp.type === 'health') {
+                // 生命道具
+                ctx.fillRect(-powerUp.width / 6, -powerUp.height / 2, powerUp.width / 3, powerUp.height);
+                ctx.fillRect(-powerUp.width / 2, -powerUp.height / 6, powerUp.width, powerUp.height / 3);
+            } else if (powerUp.type === 'energy') {
+                // 能量道具
+                ctx.beginPath();
+                ctx.moveTo(-powerUp.width / 4, -powerUp.height / 2);
+                ctx.lineTo(powerUp.width / 4, -powerUp.height / 4);
+                ctx.lineTo(0, 0);
+                ctx.lineTo(powerUp.width / 4, powerUp.height / 4);
+                ctx.lineTo(-powerUp.width / 4, powerUp.height / 2);
+                ctx.lineTo(0, powerUp.height / 4);
+                ctx.lineTo(-powerUp.width / 4, 0);
+                ctx.closePath();
+                ctx.fill();
+            }
+            
+            ctx.restore();
+        }
+
+        // 绘制音频可视化
+        function drawAudioVisualizer() {
+            if (!gameState.analyser || !gameState.dataArray) return;
+            
+            gameState.analyser.getByteFrequencyData(gameState.dataArray);
+            
+            ctx.save();
+            ctx.globalAlpha = 0.6;
+            
+            const barWidth = canvas.width / config.visualizerBars;
+            for (let i = 0; i < config.visualizerBars; i++) {
+                const barHeight = (gameState.dataArray[i] / 255) * config.visualizerBarMaxHeight;
+                const x = i * barWidth;
+                const y = canvas.height - barHeight;
+                
+                let hue;
+                if (i < config.visualizerBars / 3) {
+                    hue = 200; // 低频 - 蓝色
+                } else if (i < config.visualizerBars * 2 / 3) {
+                    hue = 120; // 中频 - 绿色
+                } else {
+                    hue = 0; // 高频 - 红色
+                }
+                
+                // 根据音乐节奏动态调整颜色饱和度
+                const saturation = 70 + (gameState.audioFeatures.energy / 255) * 30;
+                
+                ctx.fillStyle = `hsl(${hue}, ${saturation}%, 50%)`;
+                ctx.fillRect(x, y, barWidth - 2, barHeight);
+            }
+            
+            ctx.restore();
+        }
+
+        // 游戏初始化
+        function initGame() {
+            gameState.isRunning = true;
+            gameState.isPaused = false;
+            gameState.isOver = false;
+            gameState.health = 3;
+            gameState.score = 0;
+            gameState.combo = 1;
+            gameState.comboTimer = 0;
+            gameState.maxCombo = 1;
+            gameState.energy = 0;
+            gameState.difficulty = 1;
+            gameState.syncHits = 0;
+            gameState.totalHits = 0;
+            gameState.gameStartTime = Date.now();
+            gameState.beatHistory = [];
+            gameState.adaptiveBeatThreshold = 0.6;
+            gameState.lastPowerUpSpawn = 0;
+            
+            player.currentColumn = 1;
+            player.x = config.columnBorders[player.currentColumn] + config.columnWidth / 2 - player.width / 2;
+            player.y = canvas.height - 100;
+            player.bullets = [];
+            player.isShooting = false;
+            
+            enemies.length = 0;
+            enemyBullets.length = 0;
+            explosions.length = 0;
+            powerUps.length = 0;
+            particles.length = 0;
+            
+            config.lastEnemySpawn = 0;
+            
+            updateUI();
+            
+            requestAnimationFrame(gameLoop);
+        }
+
+        // 初始化音频分析
+        function initAudio(audioSource) {
+            return new Promise((resolve, reject) => {
+                try {
+                    if (gameState.audioContext) {
+                        gameState.audioContext.close();
+                    }
+                    
+                    gameState.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    gameState.analyser = gameState.audioContext.createAnalyser();
+                    gameState.analyser.fftSize = 2048;
+                    gameState.analyser.smoothingTimeConstant = 0.8;
+                    
+                    const bufferLength = gameState.analyser.frequencyBinCount;
+                    gameState.dataArray = new Uint8Array(bufferLength);
+                    
+                    if (audioSource === 'demo') {
+                        gameState.currentMusic = 'demo';
+                        gameState.beatInterval = 500;
+                        gameState.lastBeatTime = Date.now();
+                        resolve();
+                    } else {
+                        gameState.music = new Audio();
+                        gameState.music.src = audioSource;
+                        gameState.currentMusic = audioSource;
+                        gameState.music.volume = 0.7; // 设置音量
+                        
+                        gameState.music.addEventListener('canplaythrough', () => {
+                            const source = gameState.audioContext.createMediaElementSource(gameState.music);
+                            source.connect(gameState.analyser);
+                            gameState.analyser.connect(gameState.audioContext.destination);
+                            
+                            gameState.music.onended = endGame;
+                            
+                            resolve();
+                        });
+                        
+                        gameState.music.addEventListener('error', (e) => {
+                            console.error('音频加载错误:', e);
+                            reject('音频加载失败');
+                        });
+                    }
+                } catch (error) {
+                    console.error('音频上下文初始化失败:', error);
+                    reject('音频初始化失败');
+                }
+            });
+        }
+
+        // 分析音频获取节奏和音高
+        function analyzeAudio() {
+            if (gameState.currentMusic === 'demo') {
+                const now = Date.now();
+                const timeSinceLastBeat = now - gameState.lastBeatTime;
+                let beat = false;
+                
+                if (timeSinceLastBeat > gameState.beatInterval) {
+                    beat = true;
+                    gameState.lastBeatTime = now;
+                    gameState.beatDetected = true;
+                    
+                    showRhythmHint();
+                    
+                    if (beatIndicator) {
+                        beatIndicator.classList.add('beat-active');
+                        setTimeout(() => beatIndicator.classList.remove('beat-active'), 200);
+                    }
+                } else {
+                    gameState.beatDetected = false;
+                }
+                
+                gameState.audioFeatures.lowFreq = 100 + Math.sin(now / 1000) * 50;
+                gameState.audioFeatures.midFreq = 80 + Math.cos(now / 800) * 40;
+                gameState.audioFeatures.highFreq = 60 + Math.sin(now / 600) * 30;
+                gameState.audioFeatures.energy = 120 + Math.sin(now / 400) * 60;
+                
+                return { beat, note: gameState.audioFeatures.midFreq };
+            } else {
+                analyzeAudioFeatures();
+                const beat = detectBeat();
+                
+                if (beat) {
+                    showRhythmHint();
+                    
+                    if (beatIndicator) {
+                        beatIndicator.classList.add('beat-active');
+                        setTimeout(() => beatIndicator.classList.remove('beat-active'), 200);
+                    }
+                }
+                
+                return { beat, note: gameState.audioFeatures.spectralCentroid };
+            }
+        }
+
+        // 显示节奏提示
+        function showRhythmHint() {
+            if (rhythmNote) {
+                rhythmNote.style.opacity = '1';
+                rhythmNote.style.transform = 'scale(1.2)';
+                rhythmNote.style.boxShadow = '0 0 20px rgba(255, 193, 7, 0.8)';
+                
+                setTimeout(() => {
+                    rhythmNote.style.opacity = '0.3';
+                    rhythmNote.style.transform = 'scale(1)';
+                    rhythmNote.style.boxShadow = 'none';
+                }, 600);
+            }
+        }
+
+        // 显示奖励词
+        function showRewardWord(streak) {
+            if (!rewardPopup) return;
+            
+            const rewardWords = [
+                'GOOD!',
+                'GREAT!', 
+                'EXCELLENT!',
+                'AMAZING!',
+                'UNBELIEVABLE!',
+                'WONDERFUL!',
+                'FANTASTIC!',
+                'INCREDIBLE!',
+                'OUTSTANDING!',
+                'LEGENDARY!'
+            ];
+            
+            const wordIndex = Math.min(streak - 5, rewardWords.length - 1);
+            const word = rewardWords[wordIndex];
+            
+            rewardPopup.querySelector('div').textContent = word;
+            rewardPopup.style.opacity = '1';
+            rewardPopup.style.transform = 'translateX(-50%) translateY(-50%) scale(1)';
+            
+            setTimeout(() => {
+                rewardPopup.style.opacity = '0';
+                rewardPopup.style.transform = 'translateX(-50%) translateY(-50%) scale(0.8)';
+            }, 2000);
+        }
+
+        // 根据音乐调整游戏难度
+        function adjustDifficulty() {
+            const timeSinceStart = Date.now() - gameState.gameStartTime;
+            const baseDifficulty = 1 + Math.floor(timeSinceStart / config.difficultyIncreaseRate) * 0.15;
+            
+            const energyFactor = gameState.audioFeatures.energy / 255;
+            gameState.difficulty = baseDifficulty * (0.8 + energyFactor * 0.3);
+        }
+
+        // 生成道具
+        function spawnPowerUp() {
+            const now = Date.now();
+            if (now - gameState.lastPowerUpSpawn < config.powerUpSpawnRate) return;
+            
+            gameState.lastPowerUpSpawn = now;
+            
+            const powerUpType = Math.random() < 0.6 ? 'energy' : 'health';
+            const color = powerUpType === 'health' ? '#4ADE80' : '#FBBF24';
+            const column = getRandomColumn();
+            
+            const powerUp = {
+                x: getColumnCenter(column) - 10,
+                y: -20,
+                width: 20,
+                height: 20,
+                color: color,
+                type: powerUpType,
+                rotation: 0,
+                speed: 2,
+                column: column
+            };
+            
+            powerUps.push(powerUp);
+        }
+
+        // 根据音乐特征生成敌人
+        function spawnEnemy() {
+            const now = Date.now();
+            
+            const lowFreqFactor = gameState.audioFeatures.lowFreq / 255;
+            const spawnRate = config.enemySpawnRate / (gameState.difficulty * (0.4 + lowFreqFactor * 0.6));
+            
+            if (now - config.lastEnemySpawn < spawnRate) return;
+            
+            config.lastEnemySpawn = now;
+            
+            const highFreqFactor = gameState.audioFeatures.highFreq / 255;
+            const midFreqFactor = gameState.audioFeatures.midFreq / 255;
+            
+            let enemyType;
+            if (highFreqFactor > 0.8) {
+                enemyType = 1;
+            } else if (midFreqFactor > 0.7) {
+                enemyType = 2;
+            } else {
+                enemyType = 0;
+            }
+            
+            let color, speed, health, points, fireRate;
+            
+            switch (enemyType) {
+                case 0:
+                    color = '#EC4899';
+                    speed = config.enemyMinSpeed + lowFreqFactor * (config.enemyMaxSpeed - config.enemyMinSpeed);
+                    health = 1;
+                    points = 10;
+                    fireRate = 0;
+                    break;
+                case 1:
+                    color = '#8B5CF6';
+                    speed = config.enemyMinSpeed * 1.5 + highFreqFactor * (config.enemyMaxSpeed - config.enemyMinSpeed) * 0.8;
+                    health = 1;
+                    points = 15;
+                    fireRate = 0;
+                    break;
+                case 2:
+                    color = '#10B981';
+                    speed = config.enemyMinSpeed + midFreqFactor * (config.enemyMaxSpeed - config.enemyMinSpeed) * 0.6;
+                    health = 2;
+                    points = 20;
+                    fireRate = 3000 / (gameState.difficulty * (0.4 + midFreqFactor * 0.6));
+                    break;
+            }
+            
+            const column = getRandomColumn();
+            const x = getColumnCenter(column) - config.enemySize / 2;
+            
+            const enemy = {
+                x,
+                y: -config.enemySize,
+                width: config.enemySize,
+                height: config.enemySize,
+                color,
+                speed: speed * gameState.difficulty * 0.8,
+                health,
+                maxHealth: health,
+                points,
+                fireRate,
+                lastFired: 0,
+                type: enemyType,
+                column: column
+            };
+            
+            enemies.push(enemy);
+        }
+
+        // 玩家射击
+        function playerShoot(beat) {
+            const now = Date.now();
+            if (now - player.lastShot < player.shotCooldown) return;
+            
+            player.lastShot = now;
+            
+            const bulletX = player.x + player.width / 2 - config.bulletSize / 2;
+            const bulletY = player.y - config.bulletSize;
+            
+            const timeSinceLastBeat = now - gameState.lastBeatTime;
+            const beatWindow = 300;
+            const isSynced = beat || (timeSinceLastBeat < beatWindow);
+            
+            const bulletColor = isSynced ? '#F59E0B' : '#6366F1';
+            const bulletDamage = isSynced ? 2 : 1;
+            
+            gameState.totalHits++;
+            if (isSynced) {
+                gameState.syncHits++;
+                gameState.rhythmStreak++;
+                gameState.lastRhythmShot = now;
+                
+                showFeedback("完美节奏！", "#F59E0B");
+                
+                if (gameState.rhythmStreak >= 5 && gameState.rhythmStreak % 5 === 0) {
+                    showRewardWord(gameState.rhythmStreak);
+                }
+                
+                gameState.energy = Math.min(101, gameState.energy + config.energyGainPerHit * 2);
+                
+                gameState.combo++;
+                gameState.comboTimer = config.comboTime;
+                gameState.maxCombo = Math.max(gameState.maxCombo, gameState.combo);
+                
+                createParticles(bulletX + config.bulletSize / 2, bulletY + config.bulletSize / 2, 5, '#F59E0B');
+            } else {
+                gameState.rhythmStreak = 0;
+                
+                gameState.energy = Math.min(101, gameState.energy + config.energyGainPerHit);
+                
+                if (gameState.comboTimer <= 0) {
+                    gameState.combo = 1;
+                }
+            }
+            
+            player.bullets.push({
+                x: bulletX,
+                y: bulletY,
+                width: config.bulletSize,
+                height: config.bulletSize * 2,
+                color: bulletColor,
+                speed: config.bulletSpeed,
+                damage: bulletDamage,
+                isSynced
+            });
+        }
+
+        // 特殊技能：节奏爆破
+        function useSpecialSkill() {
+            if (gameState.energy < 99) {
+                showFeedback("能量不足！需要100%能量", "#FF4444");
+                return;
+            }
+            
+            gameState.energy = 0;
+            
+            for (let i = 0; i < 20; i++) {
+                explosions.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    radius: 20 + Math.random() * 30,
+                    life: 40,
+                    maxLife: 40
+                });
+            }
+            
+            explosions.push({
+                x: canvas.width / 2,
+                y: canvas.height / 2,
+                radius: 70,
+                life: 50,
+                maxLife: 50
+            });
+            
+            createParticles(canvas.width / 2, canvas.height / 2, 80, '#8B5CF6');
+            
+            const enemiesDestroyed = enemies.length;
+            enemies.forEach(enemy => {
+                gameState.score += enemy.points * gameState.combo * 2;
+                createParticles(enemy.x + enemy.width / 2, enemy.y + enemy.height / 2, 12, enemy.color);
+            });
+            
+            enemies.length = 0;
+            enemyBullets.length = 0;
+            
+            gameState.combo += 5;
+            gameState.comboTimer = config.comboTime;
+            gameState.maxCombo = Math.max(gameState.maxCombo, gameState.combo);
+            
+            showFeedback(`节奏爆破！消灭${enemiesDestroyed}个敌人`, "#8B5CF6");
+        }
+
+        // 显示反馈信息
+        function showFeedback(message, color) {
+            if (feedbackMessage) {
+                feedbackMessage.textContent = message;
+                feedbackMessage.style.color = color;
+                feedbackMessage.style.opacity = '1';
+                
+                setTimeout(() => {
+                    feedbackMessage.style.opacity = '0';
+                }, 1000);
+            }
+        }
+
+        // 碰撞检测
+        function checkCollision(rect1, rect2) {
+            return rect1.x < rect2.x + rect2.width &&
+                   rect1.x + rect1.width > rect2.x &&
+                   rect1.y < rect2.y + rect2.height &&
+                   rect1.y + rect1.height > rect2.y;
+        }
+
+        // 格式化时间
+        function formatTime(ms) {
+            const seconds = Math.floor(ms / 1000);
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+        }
+
+        // 更新游戏逻辑
+        function updateGame(deltaTime) {
+            if (gameState.isPaused || gameState.isOver) return;
+            
+            const { beat, note } = analyzeAudio();
+            
+            adjustDifficulty();
+            
+            spawnEnemy();
+            spawnPowerUp();
+            
+            if (keys.left && player.currentColumn > 0) {
+                player.currentColumn--;
+                player.x = config.columnBorders[player.currentColumn] + config.columnWidth / 2 - player.width / 2;
+            }
+            if (keys.right && player.currentColumn < config.columns - 1) {
+                player.currentColumn++;
+                player.x = config.columnBorders[player.currentColumn] + config.columnWidth / 2 - player.width / 2;
+            }
+            
+            if (keys.shoot) {
+                playerShoot(beat);
+            }
+            
+            if (keys.special) {
+                useSpecialSkill();
+                keys.special = false;
+            }
+            
+            for (let i = player.bullets.length - 1; i >= 0; i--) {
+                const bullet = player.bullets[i];
+                bullet.y -= bullet.speed;
+                
+                if (bullet.y + bullet.height < 0) {
+                    player.bullets.splice(i, 1);
+                    continue;
+                }
+                
+                for (let j = enemies.length - 1; j >= 0; j--) {
+                    const enemy = enemies[j];
+                    if (checkCollision(bullet, enemy)) {
+                        enemy.health -= bullet.damage;
+                        
+                        createParticles(bullet.x, bullet.y, 3, bullet.color);
+                        player.bullets.splice(i, 1);
+                        
+                        if (enemy.health <= 0) {
+                            gameState.score += enemy.points * gameState.combo;
+                            gameState.comboTimer = config.comboTime;
+                            
+                            gameState.energy = Math.min(101, gameState.energy + config.energyGainPerHit);
+                            
+                            createParticles(enemy.x + enemy.width / 2, enemy.y + enemy.height / 2, 8, enemy.color);
+                            
+                            explosions.push({
+                                x: enemy.x + enemy.width / 2,
+                                y: enemy.y + enemy.height / 2,
+                                radius: 20,
+                                life: 20,
+                                maxLife: 20
+                            });
+                            
+                            enemies.splice(j, 1);
+                        }
+                        break;
+                    }
+                }
+            }
+            
+            for (let i = enemies.length - 1; i >= 0; i--) {
+                const enemy = enemies[i];
+                enemy.y += enemy.speed;
+                
+                if (enemy.y > canvas.height) {
+                    enemies.splice(i, 1);
+                    continue;
+                }
+                
+                if (enemy.fireRate > 0) {
+                    const now = Date.now();
+                    if (now - enemy.lastFired > enemy.fireRate) {
+                        enemy.lastFired = now;
+                        
+                        enemyBullets.push({
+                            x: enemy.x + enemy.width / 2 - 3,
+                            y: enemy.y + enemy.height,
+                            width: 6,
+                            height: 12,
+                            speed: 4
+                        });
+                    }
+                }
+                
+                if (checkCollision(enemy, player)) {
+                    gameState.health--;
+                    createParticles(enemy.x + enemy.width / 2, enemy.y + enemy.height / 2, 10, '#FF4444');
+                    enemies.splice(i, 1);
+                    
+                    if (gameState.health <= 0) {
+                        endGame();
+                        return;
+                    }
+                }
+            }
+            
+            for (let i = enemyBullets.length - 1; i >= 0; i--) {
+                const bullet = enemyBullets[i];
+                bullet.y += bullet.speed;
+                
+                if (bullet.y > canvas.height) {
+                    enemyBullets.splice(i, 1);
+                    continue;
+                }
+                
+                if (checkCollision(bullet, player)) {
+                    gameState.health--;
+                    createParticles(bullet.x, bullet.y, 5, '#FF4444');
+                    enemyBullets.splice(i, 1);
+                    
+                    if (gameState.health <= 0) {
+                        endGame();
+                        return;
+                    }
+                }
+            }
+            
+            for (let i = powerUps.length - 1; i >= 0; i--) {
+                const powerUp = powerUps[i];
+                powerUp.y += powerUp.speed;
+                powerUp.rotation += 0.1;
+                
+                if (powerUp.y > canvas.height) {
+                    powerUps.splice(i, 1);
+                    continue;
+                }
+                
+                if (checkCollision(powerUp, player)) {
+                    if (powerUp.type === 'health') {
+                        gameState.health = Math.min(3, gameState.health + 1);
+                        showFeedback("生命恢复！", "#4ADE80");
+                    } else if (powerUp.type === 'energy') {
+                        gameState.energy = Math.min(100, gameState.energy + 30);
+                        showFeedback("能量增加！", "#FBBF24");
+                    }
+                    
+                    createParticles(powerUp.x + powerUp.width / 2, powerUp.y + powerUp.height / 2, 8, powerUp.color);
+                    powerUps.splice(i, 1);
+                }
+            }
+            
+            for (let i = explosions.length - 1; i >= 0; i--) {
+                const explosion = explosions[i];
+                explosion.life--;
+                
+                if (explosion.life <= 0) {
+                    explosions.splice(i, 1);
+                }
+            }
+            
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const particle = particles[i];
+                particle.x += particle.vx;
+                particle.y += particle.vy;
+                particle.life--;
+                
+                if (particle.life <= 0) {
+                    particles.splice(i, 1);
+                }
+            }
+            
+            if (gameState.comboTimer > 0) {
+                gameState.comboTimer -= deltaTime / 1000;
+                if (gameState.comboTimer <= 0) {
+                    gameState.combo = 1;
+                }
+            }
+            
+            if (gameState.energy > 0) {
+                gameState.energy = Math.max(0, gameState.energy - config.energyLossRate * deltaTime / 1000);
+            }
+            
+            updateUI();
+        }
+
+        // 更新UI显示
+        function updateUI() {
+            if (healthDisplay) healthDisplay.textContent = gameState.health;
+            if (scoreDisplay) scoreDisplay.textContent = gameState.score;
+            if (comboDisplay) comboDisplay.textContent = `x${gameState.combo}`;
+            if (energyFill) energyFill.style.width = `${gameState.energy}%`;
+            if (energyText) energyText.textContent = `${Math.floor(gameState.energy)}%`;
+            if (bpmDisplay) bpmDisplay.textContent = Math.round(gameState.bpm);
+        }
+
+        // 渲染游戏
+        function render() {
+            // 绘制渐变背景
+            const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            gradient.addColorStop(0, '#0f172a');
+            gradient.addColorStop(1, '#1E1B4B');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            drawAudioVisualizer();
+            drawColumnBorders();
+            
+            particles.forEach(drawParticle);
+            powerUps.forEach(drawPowerUp);
+            explosions.forEach(drawExplosion);
+            enemies.forEach(drawEnemy);
+            enemyBullets.forEach(drawEnemyBullet);
+            player.bullets.forEach(drawBullet);
+            drawPlayer();
+        }
+
+        // 游戏主循环
+        let lastTime = 0;
+        function gameLoop(currentTime) {
+            if (!gameState.isRunning) return;
+            
+            const deltaTime = currentTime - lastTime;
+            lastTime = currentTime;
+            
+            updateGame(deltaTime);
+            render();
+            
+            requestAnimationFrame(gameLoop);
+        }
+
+        // 暂停/恢复游戏
+        function togglePause() {
+            gameState.isPaused = !gameState.isPaused;
+            
+            if (gameState.isPaused) {
+                pauseMenu.classList.remove('hidden');
+                if (gameState.music && !gameState.music.paused) {
+                    gameState.music.pause();
+                }
+            } else {
+                pauseMenu.classList.add('hidden');
+                if (gameState.music && gameState.music.paused) {
+                    gameState.music.play();
+                }
+            }
+        }
+
+        // 结束游戏
+        function endGame() {
+            gameState.isOver = true;
+            gameState.isRunning = false;
+            
+            if (gameState.music) {
+                gameState.music.pause();
+            }
+            
+            gameOverScreen.classList.remove('hidden');
+            
+            if (finalScore) finalScore.textContent = gameState.score;
+            if (maxCombo) maxCombo.textContent = `x${gameState.maxCombo}`;
+            if (syncRate) {
+                const rate = gameState.totalHits > 0 ? Math.round((gameState.syncHits / gameState.totalHits) * 100) : 0;
+                syncRate.textContent = `${rate}%`;
+            }
+            if (gameTime) {
+                const duration = Date.now() - gameState.gameStartTime;
+                gameTime.textContent = formatTime(duration);
+            }
+        }
+
+        // 重新开始游戏
+        function restartGame() {
+            gameOverScreen.classList.add('hidden');
+            pauseMenu.classList.add('hidden');
+            
+            if (gameState.music) {
+                gameState.music.currentTime = 0;
+                gameState.music.play();
+            }
+            
+            initGame();
+        }
+
+        // 返回主菜单
+        function returnToMenu() {
+            gameState.isRunning = false;
+            gameState.isOver = false;
+            gameState.isPaused = false;
+            
+            if (gameState.music) {
+                gameState.music.pause();
+                gameState.music.currentTime = 0;
+            }
+            
+            gameOverScreen.classList.add('hidden');
+            pauseMenu.classList.add('hidden');
+            gameUI.classList.add('hidden');
+            startScreen.classList.remove('hidden');
+        }
+
+        // 开始游戏
+        async function startGame(musicSource) {
+            try {
+                startScreen.classList.add('hidden');
+                gameUI.classList.remove('hidden');
+                
+                await initAudio(musicSource);
+                
+                if (gameState.music && musicSource !== 'demo') {
+                    // 解决浏览器自动播放策略
+                    const playPromise = gameState.music.play();
+                    
+                    if (playPromise !== undefined) {
+                        playPromise.catch(error => {
+                            // 显示提示让用户交互
+                            const playOverlay = document.createElement('div');
+                            playOverlay.style.position = 'fixed';
+                            playOverlay.style.top = '0';
+                            playOverlay.style.left = '0';
+                            playOverlay.style.width = '100%';
+                            playOverlay.style.height = '100%';
+                            playOverlay.style.backgroundColor = 'rgba(0,0,0,0.8)';
+                            playOverlay.style.zIndex = '100';
+                            playOverlay.style.display = 'flex';
+                            playOverlay.style.flexDirection = 'column';
+                            playOverlay.style.justifyContent = 'center';
+                            playOverlay.style.alignItems = 'center';
+                            playOverlay.style.color = 'white';
+                            playOverlay.style.textAlign = 'center';
+                            playOverlay.style.padding = '20px';
+                            
+                            playOverlay.innerHTML = `
+                                <h3 class="text-2xl font-bold mb-4">需要您的操作</h3>
+                                <p class="mb-6">请点击下方按钮以播放游戏音乐</p>
+                                <button id="play-audio-btn" class="px-6 py-3 bg-gradient-to-r from-primary to-secondary rounded-xl text-white font-bold">
+                                    播放音乐
+                                </button>
+                            `;
+                            
+                            document.body.appendChild(playOverlay);
+                            
+                            document.getElementById('play-audio-btn').addEventListener('click', () => {
+                                gameState.music.play();
+                                playOverlay.remove();
+                                initGame();
+                            });
+                        });
+                    }
+                }
+                
+                initGame();
+            } catch (error) {
+                console.error('音频初始化失败:', error);
+                // 使用演示模式
+                startScreen.classList.add('hidden');
+                gameUI.classList.remove('hidden');
+                
+                gameState.currentMusic = 'demo';
+                gameState.beatInterval = 500;
+                gameState.lastBeatTime = Date.now();
+                gameState.bpm = 120;
+                
+                initGame();
+            }
+        }
+
+        // 事件监听器
+        startBtn.addEventListener('click', () => {
+            const selectedMusic = document.querySelector('.music-selector.selected');
+            const musicSource = selectedMusic ? selectedMusic.dataset.music : 'demo';
+            startGame(musicSource);
+        });
+
+        pauseBtn.addEventListener('click', togglePause);
+        resumeBtn.addEventListener('click', togglePause);
+        restartBtn.addEventListener('click', restartGame);
+        quitBtn.addEventListener('click', returnToMenu);
+        retryBtn.addEventListener('click', restartGame);
+        menuBtn.addEventListener('click', returnToMenu);
+
+        // 音乐选择器
+        let currentSelectedMusic = 'demo';
+        
+        musicSelectors.forEach(selector => {
+            selector.addEventListener('click', () => {
+                musicSelectors.forEach(s => s.classList.remove('selected', 'border-primary'));
+                selector.classList.add('selected', 'border-primary');
+                currentSelectedMusic = selector.dataset.music;
+            });
+        });
+
+        // 音乐文件上传
+        musicUpload.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const url = URL.createObjectURL(file);
+                
+                const existingCustom = document.querySelector('.music-selector[data-music^="blob:"]');
+                if (existingCustom) {
+                    existingCustom.remove();
+                }
+                
+                const customSelector = document.createElement('button');
+                customSelector.className = 'music-selector music-btn px-4 py-3 bg-dark/70 border border-light/20 hover:border-primary rounded-xl text-light transition-all flex flex-col items-center gap-2 selected border-primary';
+                customSelector.dataset.music = url;
+                customSelector.innerHTML = `
+                    <i class="fa fa-file-audio-o text-cyan-400 text-xl"></i>
+                    <span>${file.name.substring(0, 15)}${file.name.length > 15 ? '...' : ''}</span>
+                    <span class="text-xs text-light/60">上传的音乐</span>
+                `;
+                
+                const container = document.querySelector('.grid.grid-cols-1.md\\:grid-cols-3.gap-4.mb-6');
+                container.appendChild(customSelector);
+                
+                musicSelectors.forEach(s => s.classList.remove('selected', 'border-primary'));
+                customSelector.classList.add('selected', 'border-primary');
+                
+                customSelector.addEventListener('click', () => {
+                    document.querySelectorAll('.music-selector').forEach(s => s.classList.remove('selected', 'border-primary'));
+                    customSelector.classList.add('selected', 'border-primary');
+                    currentSelectedMusic = url;
+                });
+            }
+        });
+
+        // 初始化
+        resizeCanvas();
+        // 默认选择第一个音乐
+        document.querySelector('.music-selector').click();
+    </script>
+</body>
+</html>

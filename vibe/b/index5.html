@@ -1,0 +1,1292 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>海龟汤推理游戏</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('https://images.unsplash.com/photo-1505506874110-6a7a69069a08?q=80&w=1000') no-repeat center center;
+            background-size: cover;
+            opacity: 0.1;
+            z-index: -1;
+        }
+        
+        /* 开始页面样式 */
+        #start-screen {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+            padding: 20px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 10;
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        
+        .start-content {
+            max-width: 800px;
+            padding: 40px;
+            background: rgba(25, 25, 60, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            animation: fadeIn 1.2s ease;
+            border: 2px solid rgba(255, 126, 95, 0.5);
+        }
+        
+        .logo {
+            font-size: 5rem;
+            color: #ff7e5f;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(255, 126, 95, 0.7);
+            animation: pulse 2s infinite;
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, #ff7e5f, #feb47b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+        
+        .subtitle {
+            font-size: 1.4rem;
+            margin-bottom: 30px;
+            line-height: 1.6;
+            color: #e0e0ff;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            font-weight: 300;
+        }
+        
+        .start-btn {
+            padding: 18px 50px;
+            background: linear-gradient(to right, #ff7e5f, #feb47b);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            box-shadow: 0 8px 25px rgba(255, 126, 95, 0.5);
+            margin-top: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .start-btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 12px 35px rgba(255, 126, 95, 0.7);
+        }
+        
+        .start-btn:active {
+            transform: translateY(2px);
+        }
+        
+        .start-btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: 0.5s;
+        }
+        
+        .start-btn:hover::after {
+            left: 100%;
+        }
+        
+        .features {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 50px;
+            flex-wrap: wrap;
+        }
+        
+        .feature {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            width: 220px;
+            transition: all 0.4s ease;
+            border: 2px solid rgba(255, 126, 95, 0.3);
+            backdrop-filter: blur(5px);
+        }
+        
+        .feature:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.15);
+            border-color: #ff7e5f;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+        
+        .feature i {
+            font-size: 2.5rem;
+            color: #ff9a8b;
+            margin-bottom: 15px;
+        }
+        
+        .feature h3 {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+            color: #ff9a8b;
+        }
+        
+        .feature p {
+            font-size: 1rem;
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+        
+        /* 游戏页面样式 */
+        .container {
+            display: flex;
+            max-width: 1400px;
+            margin: 0 auto;
+            gap: 20px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        
+        .show-game {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 126, 95, 0.3);
+        }
+        
+        .game-container {
+            flex: 3;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .sidebar {
+            flex: 1;
+            background: rgba(25, 25, 60, 0.85);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            overflow-y: auto;
+            max-height: 85vh;
+            border: 1px solid rgba(255, 126, 95, 0.3);
+        }
+        
+        .card {
+            background: rgba(30, 30, 70, 0.85);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(5px);
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 126, 95, 0.3);
+        }
+        
+        .game-title {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #ff9a8b;
+            text-align: center;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(255, 126, 95, 0.3);
+        }
+        
+        .soup-surface {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            margin-bottom: 25px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #ff7e5f;
+        }
+        
+        .soup-bottom {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            display: none;
+            margin-top: 20px;
+            border-left: 4px solid #ff7e5f;
+            animation: fadeIn 0.8s ease;
+        }
+        
+        .input-area {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+            position: relative;
+        }
+        
+        input {
+            flex: 1;
+            padding: 14px 20px;
+            border-radius: 50px;
+            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1.1rem;
+            outline: none;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        input:focus {
+            border-color: #ff7e5f;
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 10px rgba(255, 126, 95, 0.5);
+        }
+        
+        button {
+            padding: 14px 25px;
+            background: linear-gradient(to right, #ff7e5f, #feb47b);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 126, 95, 0.4);
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255, 126, 95, 0.6);
+        }
+        
+        button:active {
+            transform: translateY(1px);
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        
+        .hint-btn {
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+        }
+        
+        .giveup-btn {
+            background: linear-gradient(to right, #ff416c, #ff4b2b);
+        }
+        
+        .clues-box {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .clue {
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: flex-start;
+            transition: all 0.3s ease;
+        }
+        
+        .clue:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateX(5px);
+        }
+        
+        .clue-question {
+            font-weight: bold;
+            color: #ff9a8b;
+            margin-right: 10px;
+        }
+        
+        .clue-answer {
+            background: rgba(25, 25, 60, 0.9);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 5px;
+        }
+        
+        .clue-yes {
+            color: #4ade80;
+            border: 1px solid #4ade80;
+        }
+        
+        .clue-no {
+            color: #f87171;
+            border: 1px solid #f87171;
+        }
+        
+        .clue-irrelevant {
+            color: #94a3b8;
+            border: 1px solid #94a3b8;
+        }
+        
+        .clue-hint {
+            color: #60a5fa;
+            border: 1px solid #60a5fa;
+        }
+        
+        .games-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+        
+        .game-item {
+            background: rgba(40, 40, 80, 0.8);
+            padding: 18px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .game-item:hover {
+            transform: translateY(-5px);
+            background: rgba(60, 60, 100, 0.9);
+            border-color: #ff7e5f;
+        }
+        
+        .game-item.active {
+            background: rgba(60, 60, 100, 0.9);
+            border-color: #ff7e5f;
+            box-shadow: 0 5px 15px rgba(255, 126, 95, 0.4);
+        }
+        
+        .game-item h3 {
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+            color: #ff9a8b;
+        }
+        
+        .game-item p {
+            font-size: 0.95rem;
+            opacity: 0.8;
+            line-height: 1.5;
+        }
+        
+        .success-message {
+            text-align: center;
+            padding: 20px;
+            background: rgba(46, 213, 115, 0.2);
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            animation: pulse 2s infinite;
+            border: 1px solid rgba(46, 213, 115, 0.3);
+        }
+        
+        .music-control {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(25, 25, 60, 0.9);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+        
+        .music-control:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+        
+        .music-control i {
+            font-size: 1.8rem;
+            color: #ff7e5f;
+        }
+        
+        .progress-container {
+            margin-top: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+        }
+        
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            color: #ff9a8b;
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(to right, #ff7e5f, #feb47b);
+            border-radius: 5px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .ai-thinking {
+            position: absolute;
+            right: 100px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 0.9rem;
+            display: none;
+        }
+        
+        .thinking-dots {
+            display: inline-block;
+            width: 10px;
+            overflow: hidden;
+            vertical-align: bottom;
+            animation: dotPulse 1.5s infinite;
+        }
+        
+        .error-message {
+            background: rgba(220, 53, 69, 0.2);
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            display: none;
+            border: 1px solid rgba(220, 53, 69, 0.3);
+            text-align: center;
+        }
+        
+        /* 动画效果 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(46, 213, 115, 0.4); }
+            70% { box-shadow: 0 0 0 15px rgba(46, 213, 115, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(46, 213, 115, 0); }
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        @keyframes dotPulse {
+            0% { width: 0; }
+            50% { width: 15px; }
+            100% { width: 0; }
+        }
+        
+        .instructions {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        .instructions h3 {
+            color: #ff9a8b;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .instructions h3 i {
+            margin-right: 10px;
+        }
+        
+        .instructions ul {
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .instructions li i {
+            margin-right: 8px;
+            color: #ff7e5f;
+            margin-top: 4px;
+        }
+        
+        @media (max-width: 900px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                max-height: none;
+            }
+            
+            .features {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .game-item {
+                padding: 15px;
+            }
+            
+            .ai-thinking {
+                right: 90px;
+                font-size: 0.8rem;
+            }
+        }
+        
+        @media (max-width: 500px) {
+            .start-content {
+                padding: 20px;
+            }
+            
+            .logo {
+                font-size: 3.5rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+            
+            .start-btn {
+                padding: 15px 30px;
+                font-size: 1.2rem;
+            }
+            
+            .feature {
+                width: 100%;
+                padding: 20px;
+            }
+            
+            .input-area {
+                flex-direction: column;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+            }
+            
+            .ai-thinking {
+                position: static;
+                margin-top: 10px;
+                transform: none;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 开始页面 -->
+    <div id="start-screen">
+        <div class="start-content">
+            <div class="logo">
+                <i class="fas fa-brain"></i>
+            </div>
+            <h1>海龟汤推理游戏</h1>
+            <p class="subtitle">挑战你的逻辑思维与推理能力！通过向智能体提问获取"是"或"不是"的线索，逐步揭开每个神秘事件背后的真相。仔细观察谜面描述，提出精准问题，成为推理大师！</p>
+            
+            <button class="start-btn" id="start-btn">
+                开始游戏 <i class="fas fa-arrow-right"></i>
+            </button>
+            
+            <div class="features">
+                <div class="feature">
+                    <i class="fas fa-lightbulb"></i>
+                    <h3>烧脑谜题</h3>
+                    <p>精选7个精心设计的海龟汤谜题，挑战你的推理极限</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-robot"></i>
+                    <h3>智能助手</h3>
+                    <p>与AI智能体互动，获取关键线索推进推理</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-music"></i>
+                    <h3>沉浸体验</h3>
+                    <p>氛围音乐与悬疑设计，带来沉浸式解谜体验</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 音乐控制 -->
+    <div class="music-control" id="music-control">
+        <i class="fas fa-music"></i>
+    </div>
+    
+    <!-- 游戏页面 -->
+    <header>
+        <h1>海龟汤推理游戏</h1>
+        <p class="subtitle">挑战你的推理能力！通过提问智能体获取"是"或"不是"的线索，逐步揭开每个神秘事件背后的真相</p>
+    </header>
+    
+    <div class="container" id="game-container">
+        <div class="game-container">
+            <div class="card">
+                <h2 class="game-title" id="current-title">请从右侧选择一个谜题开始</h2>
+                <div class="soup-surface" id="soup-surface">
+                    选择一个海龟汤谜题后，这里将显示谜面描述。你需要通过向智能体提问来获取线索，逐步推理出事件真相。
+                </div>
+                
+                <div class="soup-bottom" id="soup-bottom">
+                    <!-- 汤底内容会在这里显示 -->
+                </div>
+                
+                <div class="input-area">
+                    <input type="text" id="question-input" placeholder="向智能体提问（例如：事件中有超自然元素吗？）">
+                    <button id="ask-btn">提问</button>
+                    <div class="ai-thinking" id="ai-thinking">
+                        智能体思考中<span class="thinking-dots">...</span>
+                    </div>
+                </div>
+                
+                <div class="error-message" id="error-message">
+                    <!-- 错误消息会显示在这里 -->
+                </div>
+                
+                <div class="btn-group">
+                    <button class="hint-btn" id="hint-btn">获取提示</button>
+                    <button class="giveup-btn" id="giveup-btn">放弃解密</button>
+                </div>
+                
+                <div class="clues-box" id="clues-box">
+                    <div class="clue">
+                        <div>
+                            <div class="clue-question">线索将在这里显示</div>
+                            <div>提问后，智能体的回答会出现在线索框中</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="progress-container">
+                    <div class="progress-label">
+                        <span>推理进度</span>
+                        <span id="progress-percent">0%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress" id="progress-bar"></div>
+                    </div>
+                </div>
+                
+                <div class="success-message" id="success-message">
+                    <h3>🎉 恭喜你成功解密！ 🎉</h3>
+                    <p>你已成功推理出事件的全部真相！</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="sidebar">
+            <h2>海龟汤谜题库</h2>
+            <div class="games-list" id="games-list">
+                <!-- 游戏列表会由JS动态生成 -->
+            </div>
+            
+            <div class="instructions">
+                <h3><i class="fas fa-book"></i> 游戏指南：</h3>
+                <ul>
+                    <li><i class="fas fa-check-circle"></i> 从右侧选择一个谜题开始游戏</li>
+                    <li><i class="fas fa-check-circle"></i> 仔细阅读"汤面"（谜题描述）</li>
+                    <li><i class="fas fa-check-circle"></i> 在输入框中向智能体提问，只能回答"是"、"不是"或"无关"</li>
+                    <li><i class="fas fa-check-circle"></i> 通过线索逐步推理事件真相</li>
+                    <li><i class="fas fa-check-circle"></i> 卡住时可点击"获取提示"获得额外线索</li>
+                    <li><i class="fas fa-check-circle"></i> 成功解密后汤底会自动显示</li>
+                    <li><i class="fas fa-check-circle"></i> 实在无法解开时可选择"放弃解密"</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <audio id="background-music" loop>
+        <source src="https://er-sycdn.kuwo.cn/dd5d6b24033ec46b83004be339626c43/685bc3e3/resource/30106/trackmedia/M500004Nq9UV0k4i7Z.mp3?bitrate$128&from=vip" type="audio/mpeg">
+        您的浏览器不支持音频元素
+    </audio>
+
+    <script>
+        // 海龟汤数据
+        const games = [
+            {
+                id: 1,
+                title: "牛吃草",
+                surface: "有一个年轻的男人，他的房子和邻居夫妇的房子中间隔着一片草坪。有一天深夜，男人被隔壁的吵架声吵醒，之后他又听到了摔东西声、砍斧子声和牛吃草的声音，过了一会，他又听到了有人撞他家门的声音，但他都没有理会，又睡了过去。第二天，他发现隔壁的女主人惨死在他家门口。",
+                bottom: "夫妻俩不知何故在屋内吵架，女受害人气急而开始摔东西，男主人一时气恨交加，因此右手抄起薄刃利器，左手拨妻子舌，割掉了她的舌头，叫她不能再吵，整个过程中因受害人舌头被拨出，无法发音求救，而薄刃利器割舌不会产生大声响，故邻居没有听到这一段；男主人继后再用利斧砍掉了她的双臂，叫她不能再扔东西，由于大斧砍肉通常都会有较大声响，因此邻居能听到。那男主人行凶毕，见此凶景，全因一时冲动，突发暴行，行凶后被自己不正常的暴行和血腥场面所惊愕，呆在原地头脑一片空白。妻子突遭横祸，惊恐万状，逃出房门，逃出房门的妻子这时因为失去了双臂膀就趴在草地上咬了大把青草含在嘴里，试图为舌头止血，这就是牛吃草声的由来，继而恐其夫追出，急奔邻居家大门求救，既不能喊又不能敲门，只好用身体撞门，这就是邻居为什么只听见有人撞门，但没听到人声或敲门声的原因，试想，他连草地上拔草声都能听到，假如女人在门外喊话，他又怎么会听不到？但邻居未加理会，受害人因双臂失血过多，又加之发力撞门，加速了血液流失，于是很快晕倒在地，终因失血过多而死。其夫事后略为清醒过来立即意识到自己必然难逃法律制裁，顾不得到邻居门前追杀妻子，而是迅速逃离自家房屋。第二天早上，邻居开门一看，只见受害人双臂全无，满地鲜血，不可谓不惨。",
+                clues: [
+                    "事件发生在邻居夫妇之间",
+                    "女主人失去了舌头",
+                    "女主人失去了双臂",
+                    "牛吃草的声音是女主人发出的",
+                    "撞门声是女主人用身体撞门",
+                    "男主人逃离了现场"
+                ]
+            },
+            {
+                id: 2,
+                title: "扭曲的爱",
+                surface: "我的父母都不理我，但我还是很爱他们。",
+                bottom: "小时候我是个很听话的孩子，爸爸妈妈经常给我好吃的水果，我吃不完。他们就告诉我喜欢的东西一定要放进冰箱，这样可以保鲜，记得那时候他们工作可辛苦了，经常加班到深夜。没睡过一个好觉。于是我耍了个小聪明，在他们的水里下了安眠药。他们睡得可香了，然后我把他们放进冰箱里，从那以后我每天都会对他们说：爸爸妈妈我爱你们。现在我都六十了，他们还是那么年轻。",
+                clues: [
+                    "叙述者给父母下了安眠药",
+                    "父母被放进了冰箱",
+                    "事件发生在几十年前",
+                    "父母已经去世",
+                    "叙述者认为父母在冰箱里保持年轻"
+                ]
+            },
+            {
+                id: 3,
+                title: "盲人",
+                surface: "曾经有一个盲人，他过生日时候，他的同生共死过的好伙伴们来一起为他庆生，他开心的吹完蜡烛唱完生日歌后，大家为其鼓掌和祝福，听到掌声的盲人把他们都杀了。",
+                bottom: "男主和朋友曾经一起去探险，一段时间后没有了食物，因为男主本身是一个盲人，所以这帮朋友都骗他说每人砍下一只手来吃，可最后只砍了男主一个人的手。之后有一次男主邀请朋友们来参加自己的生日聚会，吹完蜡烛后所有人都鼓掌了，男主发现只有自己的手被砍下来吃了，男主无法忍受这样的欺骗于是杀了所有的好朋友。",
+                clues: [
+                    "男主是盲人",
+                    "男主失去了一只手",
+                    "事件与之前的探险有关",
+                    "朋友们欺骗了男主",
+                    "朋友们没有失去自己的手",
+                    "鼓掌暴露了朋友们的手完好无损"
+                ]
+            },
+            {
+                id: 4,
+                title: "令人气愤的汤面",
+                surface: "一名男子进了餐厅，点了一碗汤面，男子吃了一口后，过了不久又吃了第二口。接着男子非常地生气。",
+                bottom: "一名男子进餐厅点了一碗汤面，吃了一口后觉得味道太淡，嗜吃重口味的他便加入大量的盐巴来提味。加完盐巴进行搅拌时，赫然发现汤面里有只死掉的小苍蝇，男子虽然感到不悦，但还是理性地请服务生查看并要求更换一碗新的汤面。服务生将新的汤面端上来后男子马上吃了一口，而他立刻发觉这碗汤面非常地咸，明显是刚才自己加了大量盐巴的那碗。因此可推断厨师只是把碗中发现的死苍蝇捞出来而已，完全没有更换另一碗新的汤面，所以男子对此非常地生气。",
+                clues: [
+                    "汤面里有异物",
+                    "男子要求更换汤面",
+                    "第二碗汤面味道异常",
+                    "餐厅没有更换新的汤面",
+                    "男子生气的原因是餐厅欺骗"
+                ]
+            },
+            {
+                id: 5,
+                title: "电梯",
+                surface: "我走进电梯准备去上学，随着电梯的上升，我知道，我再也无法去学校了。",
+                bottom: "星期一早上，在妈妈的催促之下我心不在焉的走进电梯准备去学校，电梯门合上后，由于我刚起床头脑还不太清醒，忘了按一楼的楼层键，于是电梯便持续上升，我意识到自己没按楼层，正准备按下一楼楼层时，电梯突然停了，电梯门缓缓打开，我看到一个女孩倒在血泊中，而一个男人正在清理现场...男人听到动静，突然转过头来看向我，那双眼睛死死的盯着我的手，我吓了一跳，赶紧狂按电梯关门键，就在电梯即将关上的那一刹那，一双带着血的手伸了进来，我知道我再也无法去学校了。（电梯之所以上升是因为女孩被杀害前为了求救按了电梯按钮）",
+                clues: [
+                    "叙述者忘了按电梯楼层",
+                    "电梯停在了一个犯罪现场",
+                    "有一个女孩被杀害",
+                    "凶手发现了叙述者",
+                    "叙述者处于危险之中"
+                ]
+            },
+            {
+                id: 6,
+                title: "情人",
+                surface: "有一个中年老男人，他已经结了婚，他有一个老婆、一个儿子、还有一个情人。情人总是劝他和他老婆离婚，但是老男人拒绝了。有一天老男人回到了家，儿子和情人都死了！墙上还有用血写的一句话。",
+                bottom: "男人是一个双性恋，他的情人是个男的。情人想和男人结婚，但男人很喜欢自己的儿子，以情人无法生育为由拒绝离婚，情人很嫉妒、很绝望。一天趁着男人出门进到男人家里杀了儿子，用刀将自己的肚子划开把儿子塞进了自己的肚子里，并用血在墙上写下了'我怀了你的孩子呦'。",
+                clues: [
+                    "情人是男性",
+                    "男人是双性恋",
+                    "情人嫉妒男人的儿子",
+                    "情人杀害了儿子",
+                    "墙上的血字与怀孕有关"
+                ]
+            },
+            {
+                id: 7,
+                title: "邀请",
+                surface: "邻居邀请我去他家参观，我不想去，但我无处可逃了。",
+                bottom: "邻居是个走路困难的老人，我常去他家帮他做事，老人家有许多拐杖，形态各异，他说收藏拐杖是他的爱好。几天后在老人家，我听老人说最近周围人有不少都摔断了腿，我好像意识到了什么，但已经晚了，我的腿被老人用'拐杖'敲断，做成了所谓的'拐杖'。他拖着我再次来到收藏拐杖的地方，邀请我参观他的杰作，我拼命挣扎，但都无济于事。",
+                clues: [
+                    "邻居是行动不便的老人",
+                    "邻居收藏拐杖",
+                    "最近有人摔断腿",
+                    "邻居的拐杖来源可疑",
+                    "叙述者被邻居袭击"
+                ]
+            }
+        ];
+
+        // 当前游戏状态
+        let currentGame = null;
+        let revealedClues = [];
+        let gameSolved = false;
+        let musicPlaying = false;
+        let progress = 0;
+        let conversationHistory = [];
+        
+        // 在此处插入您的DeepSeek API密钥
+        const API_KEY = 'sk-9ce093d4a0cd42378a152384ba439fb8';
+
+        // DOM元素
+        const startScreen = document.getElementById('start-screen');
+        const startBtn = document.getElementById('start-btn');
+        const gameContainer = document.getElementById('game-container');
+        const gamesListEl = document.getElementById('games-list');
+        const currentTitleEl = document.getElementById('current-title');
+        const soupSurfaceEl = document.getElementById('soup-surface');
+        const soupBottomEl = document.getElementById('soup-bottom');
+        const questionInputEl = document.getElementById('question-input');
+        const askBtnEl = document.getElementById('ask-btn');
+        const hintBtnEl = document.getElementById('hint-btn');
+        const giveupBtnEl = document.getElementById('giveup-btn');
+        const cluesBoxEl = document.getElementById('clues-box');
+        const successMessageEl = document.getElementById('success-message');
+        const musicControlEl = document.getElementById('music-control');
+        const backgroundMusic = document.getElementById('background-music');
+        const progressBar = document.getElementById('progress-bar');
+        const progressPercent = document.getElementById('progress-percent');
+        const aiThinkingEl = document.getElementById('ai-thinking');
+        const errorMessageEl = document.getElementById('error-message');
+
+        // 初始化游戏列表
+        function initGamesList() {
+            gamesListEl.innerHTML = '';
+            games.forEach(game => {
+                const gameItem = document.createElement('div');
+                gameItem.className = 'game-item';
+                gameItem.dataset.id = game.id;
+                gameItem.innerHTML = `
+                    <h3>${game.title}</h3>
+                    <p>${game.surface.substring(0, 100)}...</p>
+                `;
+                gameItem.addEventListener('click', () => {
+                    // 移除之前选中的项目
+                    document.querySelectorAll('.game-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    // 添加当前选中
+                    gameItem.classList.add('active');
+                    
+                    selectGame(game.id);
+                    // 播放音乐
+                    if (!musicPlaying) {
+                        toggleMusic();
+                    }
+                });
+                gamesListEl.appendChild(gameItem);
+            });
+        }
+
+        // 选择游戏
+        function selectGame(gameId) {
+            currentGame = games.find(g => g.id === gameId);
+            revealedClues = [];
+            gameSolved = false;
+            progress = 0;
+            conversationHistory = [];
+            updateProgress();
+            
+            currentTitleEl.textContent = currentGame.title;
+            soupSurfaceEl.textContent = currentGame.surface;
+            soupBottomEl.style.display = 'none';
+            soupBottomEl.textContent = currentGame.bottom;
+            cluesBoxEl.innerHTML = '<div class="clue"><div>提问获取线索，逐步推理真相...</div></div>';
+            successMessageEl.style.display = 'none';
+            errorMessageEl.style.display = 'none';
+            
+            // 重置按钮状态
+            hintBtnEl.disabled = false;
+            giveupBtnEl.disabled = false;
+            askBtnEl.disabled = false;
+            questionInputEl.disabled = false;
+        }
+
+        // 更新进度条
+        function updateProgress() {
+            if (!currentGame) return;
+            
+            // 计算进度百分比
+            progressPercent.textContent = `${progress}%`;
+            progressBar.style.width = `${progress}%`;
+            
+            // 设置进度条颜色
+            if (progress < 30) {
+                progressBar.style.background = "#ff416c";
+            } else if (progress < 70) {
+                progressBar.style.background = "#ff9a8b";
+            } else {
+                progressBar.style.background = "#4ade80";
+            }
+        }
+
+        // 向智能体提问
+        async function askQuestion() {
+            if (!currentGame) {
+                alert('请先选择一个谜题！');
+                return;
+            }
+            
+            const question = questionInputEl.value.trim();
+            if (!question) {
+                alert('请输入问题！');
+                return;
+            }
+            
+            // 显示加载状态
+            askBtnEl.disabled = true;
+            aiThinkingEl.style.display = 'block';
+            errorMessageEl.style.display = 'none';
+            
+            try {
+                // 调用智能体API
+                const answer = await getIntelligentAnswer(question);
+                
+                // 添加到线索框
+                addClueToBox(question, answer);
+                
+                // 清空输入框
+                questionInputEl.value = '';
+                
+                // 更新进度 - 更合理的进度系统
+                progress = Math.min(progress + 8, 100);
+                updateProgress();
+                
+                // 检查是否已解决
+                checkIfSolved();
+            } catch (error) {
+                console.error("智能体请求失败:", error);
+                showError(`请求失败: ${error.message}`);
+            } finally {
+                // 恢复按钮状态
+                askBtnEl.disabled = false;
+                aiThinkingEl.style.display = 'none';
+            }
+        }
+
+        // 显示错误消息
+        function showError(message) {
+            errorMessageEl.textContent = message;
+            errorMessageEl.style.display = 'block';
+        }
+
+        // 智能体API调用
+        async function getIntelligentAnswer(question) {
+            // 记录对话历史
+            conversationHistory.push({
+                role: "user",
+                content: question
+            });
+            
+            // 构建系统提示
+            const systemPrompt = buildSystemPrompt();
+            
+            // 准备消息数组
+            const messages = [
+                { role: "system", content: systemPrompt },
+                ...conversationHistory.map(msg => ({
+                    role: msg.role,
+                    content: msg.content
+                }))
+            ];
+            
+            // API请求参数
+            const requestBody = {
+                model: "deepseek-chat",
+                messages: messages,
+                temperature: 0.3,
+                max_tokens: 100,
+                stop: ["\n"]
+            };
+            
+            // 发送请求到DeepSeek API
+            const response = await fetch('https://api.deepseek.com/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${API_KEY}`
+                },
+                body: JSON.stringify(requestBody)
+            });
+            
+            if (!response.ok) {
+                // 尝试获取更多错误信息
+                let errorDetail = '请检查API密钥和网络连接';
+                try {
+                    const errorData = await response.json();
+                    if (errorData.error && errorData.error.message) {
+                        errorDetail = errorData.error.message;
+                    }
+                } catch (e) {
+                    // 忽略JSON解析错误
+                }
+                
+                throw new Error(`API请求失败 (${response.status}): ${errorDetail}`);
+            }
+            
+            const data = await response.json();
+            
+            // 检查响应是否包含有效数据
+            if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+                throw new Error('无效的API响应格式');
+            }
+            
+            const answer = data.choices[0].message.content.trim();
+            
+            // 规范化回答
+            const normalizedAnswer = normalizeAnswer(answer);
+            
+            // 记录智能体回答
+            conversationHistory.push({
+                role: "assistant",
+                content: normalizedAnswer
+            });
+            
+            // 限制对话历史长度
+            if (conversationHistory.length > 10) {
+                conversationHistory = conversationHistory.slice(-10);
+            }
+            
+            return normalizedAnswer;
+        }
+        
+        // 构建系统提示
+        function buildSystemPrompt() {
+            return `你是海龟汤游戏的智能推理助手，需根据给定的汤底和用户的历史提问，判断当前问题与事件真相的关联，仅回答 **"是"、"否" 或 "无关"**。你的目标是通过有限的回答引导用户推理出完整事件。
+            
+            回答规则：
+            1. 回答 "是" 的情况：问题与汤底中的关键线索、事件逻辑或隐藏细节完全一致（需严格匹配事实）
+            2. 回答 "否" 的情况：问题与汤底事实直接矛盾，或与事件核心逻辑无关（即使问题部分正确但整体偏离真相，也需回答 "否"）
+            3. 回答 "无关" 的情况：问题超出汤底描述的事件范围，或涉及未提及的背景、无关人物及细节
+            
+            当前谜题汤底：
+            ${currentGame.bottom}
+            
+            请严格按照以上规则回答，只输出"是"、"否"或"无关"，不要添加任何解释。`;
+        }
+        
+        // 规范化回答
+        function normalizeAnswer(answer) {
+            const lowerAnswer = answer.toLowerCase();
+            
+            if (lowerAnswer.includes("是") || lowerAnswer.includes("yes") || lowerAnswer.includes("对")) {
+                return "是";
+            }
+            
+            if (lowerAnswer.includes("否") || lowerAnswer.includes("不是") || lowerAnswer.includes("no") || lowerAnswer.includes("不对")) {
+                return "不是";
+            }
+            
+            if (lowerAnswer.includes("无关") || lowerAnswer.includes("不相关") || lowerAnswer.includes("irrelevant")) {
+                return "无关";
+            }
+            
+            // 默认返回"无关"
+            return "无关";
+        }
+
+        // 添加线索到线索框
+        function addClueToBox(question, answer) {
+            const clueEl = document.createElement('div');
+            clueEl.className = 'clue';
+            
+            let answerClass = '';
+            if (answer === "是") answerClass = 'clue-yes';
+            else if (answer === "不是") answerClass = 'clue-no';
+            else answerClass = 'clue-irrelevant';
+            
+            clueEl.innerHTML = `
+                <div>
+                    <div class="clue-question">${question}</div>
+                    <div class="clue-answer ${answerClass}">${answer}</div>
+                </div>
+            `;
+            
+            cluesBoxEl.prepend(clueEl);
+            cluesBoxEl.scrollTop = 0;
+        }
+
+        // 获取提示
+        function getHint() {
+            if (!currentGame || gameSolved) return;
+            
+            // 找出尚未揭示的线索
+            const unrevealedClues = currentGame.clues.filter(clue => 
+                !revealedClues.includes(clue)
+            );
+            
+            if (unrevealedClues.length === 0) {
+                alert('所有线索都已揭示！');
+                return;
+            }
+            
+            // 随机选择一个线索
+            const randomIndex = Math.floor(Math.random() * unrevealedClues.length);
+            const hintClue = unrevealedClues[randomIndex];
+            revealedClues.push(hintClue);
+            
+            // 添加到线索框
+            const clueEl = document.createElement('div');
+            clueEl.className = 'clue';
+            clueEl.innerHTML = `
+                <div>
+                    <div class="clue-question">提示线索</div>
+                    <div class="clue-answer clue-hint">${hintClue}</div>
+                </div>
+            `;
+            
+            cluesBoxEl.prepend(clueEl);
+            cluesBoxEl.scrollTop = 0;
+            
+            // 更新进度
+            progress = Math.min(progress + 15, 100);
+            updateProgress();
+            
+            // 检查是否已解决
+            checkIfSolved();
+        }
+
+        // 放弃解密
+        function giveUp() {
+            if (!currentGame) return;
+            
+            soupBottomEl.style.display = 'block';
+            gameSolved = true;
+            progress = 100;
+            updateProgress();
+            
+            // 禁用按钮
+            hintBtnEl.disabled = true;
+            giveupBtnEl.disabled = true;
+            askBtnEl.disabled = true;
+            questionInputEl.disabled = true;
+            
+            // 显示成功消息
+            successMessageEl.style.display = 'block';
+        }
+
+        // 检查是否已解决
+        function checkIfSolved() {
+            if (progress >= 100) {
+                gameSolved = true;
+                soupBottomEl.style.display = 'block';
+                successMessageEl.style.display = 'block';
+                
+                // 禁用按钮
+                hintBtnEl.disabled = true;
+                giveupBtnEl.disabled = true;
+                askBtnEl.disabled = true;
+                questionInputEl.disabled = true;
+            }
+        }
+
+        // 切换音乐
+        function toggleMusic() {
+            if (musicPlaying) {
+                backgroundMusic.pause();
+                musicControlEl.innerHTML = '<i class="fas fa-music"></i>';
+            } else {
+                backgroundMusic.play().catch(e => {
+                    console.log("自动播放被阻止，请手动播放音频");
+                    musicControlEl.innerHTML = '<i class="fas fa-play"></i>';
+                });
+                musicControlEl.innerHTML = '<i class="fas fa-pause"></i>';
+            }
+            musicPlaying = !musicPlaying;
+        }
+
+        // 事件监听
+        startBtn.addEventListener('click', () => {
+            startScreen.style.opacity = '0';
+            startScreen.style.transform = 'translateY(-20px)';
+            
+            setTimeout(() => {
+                startScreen.style.display = 'none';
+                gameContainer.classList.add('show-game');
+                // 预加载音乐
+                backgroundMusic.load();
+            }, 800);
+        });
+        
+        askBtnEl.addEventListener('click', askQuestion);
+        hintBtnEl.addEventListener('click', getHint);
+        giveupBtnEl.addEventListener('click', giveUp);
+        
+        questionInputEl.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') askQuestion();
+        });
+        
+        musicControlEl.addEventListener('click', toggleMusic);
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            initGamesList();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JS 请求</title>
+    <!-- <script>//阻塞
+        //window.onload 有点晚
+        //document.addEventListener('DOMContentLoaded', ()=>{
+                console.log(document.getElementById('repos'));
+        //})
+        
+    </script> -->
+</head>
+<body>
+    <ul id="repos"></ul>
+    <script>//阻塞
+        // DOMContentLoaded表示DOM节点加载完成
+        // DOMContentLoaded 是浏览器在 HTML 文档解析完成后触发的一个事件
+        // 它标志着页面的结构已经可用，但不等待外部资源（如图片、样式表）完全加载。
+        //缺点：then的链式调用有点繁琐
+        //es6版本
+        document.addEventListener('DOMContentLoaded', async()=>{
+               // console.log(document.getElementById('repos'));
+                // fetch('https://api.github.com/users/shunwuyu/repos')
+                // .then(response => response.json()) // 解析响应为 JSON 数据
+                // .then(data=>{
+                //     document.getElementById('repos').innerHTML = data.map(repo => 
+                //     `<li>${repo.name}</li>`).join(''); // 显示仓库名称
+                // })
+                //同步代码一样
+                //es8 async await 异步代码
+                //await后面是 promise 实例
+                //fetch是我们主动向后端请求数据的函数，会返回一个promise实例，.then 是promise实例的方法,fetch本质就是一个promise实例
+                //new Promise Promise{} fetch的本质是返回一个promise实例
+                //pending 等待状态
+                //fulfilled 成功状态
+                //rejected 失败状态
+                console.log(fetch('https://api.github.com/users/shunwuyu/repos'))
+                //resolve() fulfilled 完成了
+                //reject() rejected 失败了
+                const result =await fetch('https://api.github.com/users/shunwuyu/repos')
+                const data = await result.json()
+                document.getElementById('repos').innerHTML = data.map(repo =>
+                `<li>${repo.name}</li>`).join('');
+        })
+        // api 接口地址 数据存放的地址
+        // www.bilibili.com 网站地址，用户访问
+        // https://api.github.com/users/shunwuyu   url
+        // - JSOM格式 数据返回
+        //   后端 node,java,php,go
+        // - 资源
+        // 前端
+        // - 通过js fetch 主动拉取资源
+        // 前端 自己做主
+        // - web 2.0 动态页面
+    </script>
+</body>
+</html>
