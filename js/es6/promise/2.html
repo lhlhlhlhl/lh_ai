@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        //如何让1111 最后执行
+        //fetch + .then
+        //fetch网络请求 异步任务
+        //es6的promise 异步变同步的解决方案
+        //promise 是一个构造函数 可以new一个promise对象
+        //promise实例化是需要传入参数的 传入一个函数 立即运行
+        const p= new Promise((resolve)=>{//new的过程是同步的
+            console.log("3333");//立即执行
+            setTimeout(()=>{//定时器的注册
+            console.log("2222");
+            resolve()//promise实例的状态改变
+            //调用resolve方法 会将promise实例的状态改为fulfilled，会触发then方法
+        },10)})
+        //Promise实例的prototype上有一个then方法
+        console.log(p);
+        p.then(()=>{
+            console.log("1111");
+        })
+       
+    </script>
+</body>
+</html>

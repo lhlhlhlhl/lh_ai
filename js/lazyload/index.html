@@ -46,20 +46,20 @@
             console.log(item);
             if(item.dataset.original==="") return;//如果图片元素有data-original属性
                //item是对象，dataset是对象的属性，data-original是属性名，""是属性值。
-               rect=item.getBoundingClientRect();
-               //img 标签对象在当前可视区中的位置信息。
-               if(rect.top<viewHeight && rect.bottom > 0){//如果图片元素在可视区中,有必要渲染
-                   (function(){
-                     var img = new Image();//创建一个新的图片对象，内存中的DOM对象，img对象
-                     img.src = item.dataset.original;//将图片元素的data-original属性值赋值给图片对象的src属性
-                     img.onload = function(){//当图片加载完成后,http请求完成后，有缓存cache,异步
-                        //items.src = item.dataset.original; 图片大，网速慢，你会看到图片加载的过程，用户体验不好
-                         item.src = item.dataset.original;//将图片对象的src属性值赋值给图片元素的src属性
-                         item.removeAttribute('data-original');//不用再次迭代这个item,移除图片元素的data-original属性，垃圾回收，性能
-                         item.removeAttribute('lazyload');//移除图片元素的lazyload属性，垃圾回收，性能
-                        }  
-                   })()
-               }
+            rect=item.getBoundingClientRect();
+            //img 标签对象在当前可视区中的位置信息。
+            if(rect.top<viewHeight && rect.bottom > 0){//如果图片元素在可视区中,有必要渲染
+                (function(){
+                  var img = new Image();//创建一个新的图片对象，内存中的DOM对象，img对象
+                  img.src = item.dataset.original;//将图片元素的data-original属性值赋值给图片对象的src属性
+                  img.onload = function(){//当图片加载完成后,http请求完成后，有缓存cache,异步
+                    //items.src = item.dataset.original; 图片大，网速慢，你会看到图片加载的过程，用户体验不好
+                      item.src = item.dataset.original;//将图片对象的src属性值赋值给图片元素的src属性
+                      item.removeAttribute('data-original');//不用再次迭代这个item,移除图片元素的data-original属性，垃圾回收，性能
+                      item.removeAttribute('lazyload');//移除图片元素的lazyload属性，垃圾回收，性能
+                    }  
+                })()
+            }
             })
     }
     window.addEventListener('scroll',lazyload )

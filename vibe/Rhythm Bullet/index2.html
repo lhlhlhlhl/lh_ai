@@ -7,7 +7,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <script>
-       
         tailwind.config = {
             theme: {
                 extend: {
@@ -114,20 +113,16 @@
             </div>
             <div class="mt-auto scale-in">
                 <p class="text-light/60 text-center mb-4">选择音乐开始游戏</p>
-                <!-- 歌曲按钮 -->
-    
-                    <div class="flex flex-wrap justify-center gap-3 mt-4">
-                        <button class="music-selector px-4 py-2 bg-dark/60 border border-light/20 hover:border-primary rounded-md text-sm transition-all" data-music="https://er-sycdn.kuwo.cn/b28371cbb58505f0899b92160863453a/684a9801/resource/30106/trackmedia/M500000jJ2Kz4G3ZT7.mp3?bitrate$128&from=vip" >
-                            兰亭序
-                        </button>
-                        <button class="music-selector px-4 py-2 bg-dark/60 border border-light/20 hover:border-primary rounded-md text-sm transition-all" data-music="https://er-sycdn.kuwo.cn/b28371cbb58505f0899b92160863453a/684a9801/resource/30106/trackmedia/M500000jJ2Kz4G3ZT7.mp3?bitrate$128&from=vip" >
-                            跳楼机
-                        </button>
-                        <button class="music-selector px-4 py-2 bg-dark/60 border border-light/20 hover:border-primary rounded-md text-sm transition-all" data-music="./assets/music3.mp3">
-                            等你下课
-                        </button>
-                        <audio id="audio-player" style="display: none;"></audio>
-                    </div>
+                <div class="flex flex-wrap justify-center gap-3 mt-4">
+                    <button class="music-selector px-4 py-2 bg-dark/60 border border-light/20 hover:border-primary rounded-md text-sm transition-all" data-music="https://cdn.pixabay.com/audio/2025/06/26/audio_d109eebb33.mp3">
+                        텅빈 머리
+                    </button>
+                    <button class="music-selector px-4 py-2 bg-dark/60 border border-light/20 hover:border-primary rounded-md text-sm transition-all" data-music="https://cdn.pixabay.com/audio/2025/06/16/audio_b4ebadd73b.mp3">
+                        LOVE
+                    </button>
+                    <button class="music-selector px-4 py-2 bg-dark/60 border border-light/20 hover:border-primary rounded-md text-sm transition-all" data-music="https://cdn.pixabay.com/audio/2025/06/17/audio_c5a69c67bf.mp3">
+                        夏の恋
+                    </button>
                 </div>
                 <div class="flex flex-wrap justify-center gap-3 mb-4">
                     <button class="music-selector px-4 py-2 bg-dark/60 border border-light/20 hover:border-primary rounded-md text-sm transition-all" data-music="demo">
@@ -140,6 +135,12 @@
                     </label>
                     <input type="file" id="music-upload" accept="audio/*" class="hidden">
                     <p class="text-xs text-light/50 mt-2">支持 MP3, WAV, OGG 等格式</p>
+                </div>
+                <div id="music-loading" class="hidden mt-4 text-center text-primary">
+                    <i class="fa fa-spinner fa-spin mr-2"></i> 音乐加载中...
+                </div>
+                <div id="music-error" class="hidden mt-4 text-center text-red-400">
+                    <i class="fa fa-exclamation-circle mr-2"></i> 音乐加载失败，将使用演示模式
                 </div>
             </div>
         </div>
@@ -290,7 +291,6 @@
         <!-- 游戏画布 -->
         <canvas id="game-canvas" class="absolute inset-0 z-10 w-full h-full"></canvas>
         
-
         <!-- 暂停菜单 -->
         <div id="pause-menu" class="absolute inset-0 z-50 flex flex-col items-center justify-center bg-dark/80 backdrop-blur-sm p-6 hidden fade-in">
             <h2 class="text-3xl md:text-4xl font-bold text-primary mb-8 scale-in">游戏暂停</h2>
@@ -341,7 +341,6 @@
     </div>
 
     <script>
-        
         // 游戏状态管理
         const gameState = {
             isRunning: false,
@@ -378,29 +377,29 @@
             beatHistory: [],
             adaptiveBeatThreshold: 0.6,
             lastPowerUpSpawn: 0,
-            rhythmStreak: 0, // 连续节奏射击次数
-            lastRhythmShot: 0 // 上次节奏射击时间
+            rhythmStreak: 0,
+            lastRhythmShot: 0
         };
 
         // 游戏配置
         const config = {
-            playerSpeed: 15, // 降低移动速度
+            playerSpeed: 15,
             bulletSpeed: 10,
-            enemyMinSpeed: 0.8, // 降低敌人最小速度
-            enemyMaxSpeed: 2.5, // 降低敌人最大速度
+            enemyMinSpeed: 0.8,
+            enemyMaxSpeed: 2.5,
             playerSize: 30,
             bulletSize: 8,
             enemySize: 25,
-            enemySpawnRate: 1500, // 增加生成间隔，降低难度
+            enemySpawnRate: 1500,
             lastEnemySpawn: 0,
-            energyGainPerHit: 2, // 进一步增加能量增益
-            energyLossRate: 0.1, // 进一步降低能量衰减率
+            energyGainPerHit: 2,
+            energyLossRate: 0.1,
             comboTime: 3,
             beatDetectionSensitivity: 30,
             visualizerBars: 64,
             visualizerBarWidth: 5,
             visualizerBarMaxHeight: 100,
-            difficultyIncreaseRate: 45000, // 增加难度提升间隔
+            difficultyIncreaseRate: 45000,
             beatDetectionWindow: 150,
             powerUpSpawnRate: 30000,
             frequencyBands: {
@@ -408,7 +407,6 @@
                 mid: { start: 85, end: 255 },
                 high: { start: 255, end: 512 }
             },
-            // 四列系统配置
             columns: 4,
             columnWidth: 0,
             columnBorders: []
@@ -425,7 +423,7 @@
             lastShot: 0,
             shotCooldown: 200,
             isShooting: false,
-            currentColumn: 1 // 玩家当前所在列（0-3）
+            currentColumn: 1
         };
 
         const enemies = [];
@@ -435,7 +433,7 @@
         const particles = [];
 
         // DOM 元素
-        const audioPlayer = document.getElementById('audio-player');
+        const audioElement = document.createElement('audio');
         const canvas = document.getElementById('game-canvas');
         const ctx = canvas.getContext('2d');
         const startScreen = document.getElementById('start-screen');
@@ -473,21 +471,20 @@
         const musicUpload = document.getElementById('music-upload');
         const rhythmNote = document.getElementById('rhythm-note');
         const rewardPopup = document.getElementById('reward-popup');
-
+        const musicLoading = document.getElementById('music-loading');
+        const musicError = document.getElementById('music-error');
         
         // 设置画布尺寸和四列系统
         function resizeCanvas() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
             
-            // 计算四列的宽度和位置
             config.columnWidth = canvas.width / config.columns;
             config.columnBorders = [];
             for (let i = 0; i <= config.columns; i++) {
                 config.columnBorders.push(i * config.columnWidth);
             }
             
-            // 初始化玩家位置到第二列中央
             player.currentColumn = 1;
             player.x = config.columnBorders[player.currentColumn] + config.columnWidth / 2 - player.width / 2;
             player.y = canvas.height - 100;
@@ -500,23 +497,22 @@
         const keys = {
             left: false,
             right: false,
-            shoot: false, // 改为false，不再自动射击
+            shoot: false,
             special: false
         };
 
         window.addEventListener('keydown', (e) => {
-            if (!gameState.isRunning || gameState.isPaused) return; // 只在游戏运行时响应
+            if (!gameState.isRunning || gameState.isPaused) return;
             
             if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') keys.left = true;
             if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') keys.right = true;
-            if (e.key === ' ') { // 空格键射击
+            if (e.key === ' ') {
                 e.preventDefault();
                 keys.shoot = true;
             }
             if (e.key === 'x' || e.key === 'X') {
                 e.preventDefault();
                 keys.special = true;
-                console.log('X键被按下，能量:', gameState.energy); // 调试信息
             }
             if (e.key === 'Escape' && gameState.isRunning) togglePause();
         });
@@ -524,7 +520,7 @@
         window.addEventListener('keyup', (e) => {
             if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') keys.left = false;
             if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') keys.right = false;
-            if (e.key === ' ') keys.shoot = false; // 空格键释放
+            if (e.key === ' ') keys.shoot = false;
             if (e.key === 'x' || e.key === 'X') keys.special = false;
         });
 
@@ -534,7 +530,6 @@
             const rect = canvas.getBoundingClientRect();
             const mouseX = e.clientX - rect.left;
             
-            // 根据鼠标位置确定目标列
             const targetColumn = Math.floor(mouseX / config.columnWidth);
             if (targetColumn >= 0 && targetColumn < config.columns) {
                 player.currentColumn = targetColumn;
@@ -544,7 +539,6 @@
 
         canvas.addEventListener('mousedown', () => {
             if (!gameState.isRunning || gameState.isPaused) return;
-            // 鼠标点击也可以射击，但主要使用空格键
             keys.shoot = true;
         });
 
@@ -560,82 +554,6 @@
         // 获取随机列
         function getRandomColumn() {
             return Math.floor(Math.random() * config.columns);
-        }
-
-        // 音频分析功能
-        function analyzeAudioFeatures() {
-            if (!gameState.analyser || !gameState.dataArray) return;
-            
-            gameState.analyser.getByteFrequencyData(gameState.dataArray);
-            
-            const bufferLength = gameState.analyser.frequencyBinCount;
-            const nyquist = gameState.audioContext.sampleRate / 2;
-            const freqPerBin = nyquist / bufferLength;
-            
-            // 计算频段能量
-            let lowFreqEnergy = 0, midFreqEnergy = 0, highFreqEnergy = 0;
-            let totalEnergy = 0;
-            let spectralCentroid = 0;
-            let weightedSum = 0;
-            
-            for (let i = 0; i < bufferLength; i++) {
-                const freq = i * freqPerBin;
-                const magnitude = gameState.dataArray[i];
-                
-                totalEnergy += magnitude;
-                weightedSum += freq * magnitude;
-                
-                if (freq <= config.frequencyBands.low.end) {
-                    lowFreqEnergy += magnitude;
-                } else if (freq <= config.frequencyBands.mid.end) {
-                    midFreqEnergy += magnitude;
-                } else if (freq <= config.frequencyBands.high.end) {
-                    highFreqEnergy += magnitude;
-                }
-            }
-            
-            // 归一化
-            gameState.audioFeatures.lowFreq = lowFreqEnergy / (config.frequencyBands.low.end / freqPerBin);
-            gameState.audioFeatures.midFreq = midFreqEnergy / ((config.frequencyBands.mid.end - config.frequencyBands.low.end) / freqPerBin);
-            gameState.audioFeatures.highFreq = highFreqEnergy / ((config.frequencyBands.high.end - config.frequencyBands.mid.end) / freqPerBin);
-            gameState.audioFeatures.energy = totalEnergy / bufferLength;
-            gameState.audioFeatures.spectralCentroid = totalEnergy > 0 ? weightedSum / totalEnergy : 0;
-        }
-
-        // 自适应节拍检测
-        function detectBeat() {
-            if (!gameState.audioFeatures.energy) return false;
-            
-            const now = Date.now();
-            const timeSinceLastBeat = now - gameState.lastBeatTime;
-            
-            // 动态调整节拍阈值
-            gameState.beatHistory.push(gameState.audioFeatures.energy);
-            if (gameState.beatHistory.length > 43) {
-                gameState.beatHistory.shift();
-                
-                const avgEnergy = gameState.beatHistory.reduce((a, b) => a + b) / gameState.beatHistory.length;
-                const variance = gameState.beatHistory.reduce((sum, val) => sum + Math.pow(val - avgEnergy, 2), 0) / gameState.beatHistory.length;
-                const stdDev = Math.sqrt(variance);
-                
-                gameState.adaptiveBeatThreshold = avgEnergy + stdDev * 1.5;
-            }
-            
-            const isEnergyPeak = gameState.audioFeatures.energy > gameState.adaptiveBeatThreshold;
-            const isTimingValid = timeSinceLastBeat > gameState.beatInterval * 0.5;
-            
-            if (isEnergyPeak && isTimingValid) {
-                if (gameState.lastBeatTime > 0) {
-                    const currentBPM = 60000 / timeSinceLastBeat;
-                    gameState.bpm = gameState.bpm * 0.9 + currentBPM * 0.1;
-                    gameState.beatInterval = 60000 / gameState.bpm;
-                }
-                
-                gameState.lastBeatTime = now;
-                return true;
-            }
-            
-            return false;
         }
 
         // 创建粒子效果
@@ -661,7 +579,6 @@
             ctx.lineWidth = 2;
             ctx.globalAlpha = 0.3;
             
-            // 绘制列分隔线
             for (let i = 1; i < config.columns; i++) {
                 const x = config.columnBorders[i];
                 ctx.beginPath();
@@ -670,7 +587,6 @@
                 ctx.stroke();
             }
             
-            // 绘制左右边界
             ctx.globalAlpha = 0.5;
             ctx.lineWidth = 3;
             ctx.beginPath();
@@ -702,7 +618,6 @@
             ctx.shadowColor = player.color;
             ctx.shadowBlur = 10;
             
-            // 绘制玩家飞船
             ctx.beginPath();
             ctx.moveTo(player.x + player.width / 2, player.y);
             ctx.lineTo(player.x, player.y + player.height);
@@ -712,7 +627,6 @@
             ctx.closePath();
             ctx.fill();
             
-            // 绘制推进器效果
             if (keys.left || keys.right) {
                 ctx.fillStyle = '#FF6B35';
                 ctx.beginPath();
@@ -731,19 +645,16 @@
             ctx.shadowBlur = 5;
             
             if (bullet.isSynced) {
-                // 同步子弹有特殊效果
                 ctx.beginPath();
                 ctx.arc(bullet.x + bullet.width / 2, bullet.y + bullet.height / 2, bullet.width / 2 + 2, 0, Math.PI * 2);
                 ctx.fill();
                 
-                // 添加光环效果
                 ctx.strokeStyle = bullet.color;
                 ctx.lineWidth = 2;
                 ctx.beginPath();
                 ctx.arc(bullet.x + bullet.width / 2, bullet.y + bullet.height / 2, bullet.width / 2 + 5, 0, Math.PI * 2);
                 ctx.stroke();
                 
-                // 添加尾迹效果
                 ctx.fillStyle = bullet.color + '66';
                 ctx.fillRect(bullet.x, bullet.y + bullet.height, bullet.width, bullet.height);
             } else {
@@ -760,42 +671,29 @@
             ctx.shadowColor = enemy.color;
             ctx.shadowBlur = 8;
             
-            // 根据敌人类型绘制不同形状
             if (enemy.type === 0) {
-                // 普通敌人 - 圆形
                 ctx.beginPath();
                 ctx.arc(enemy.x + enemy.width / 2, enemy.y + enemy.height / 2, enemy.width / 2, 0, Math.PI * 2);
                 ctx.fill();
-            } else if (enemy.type === 1) {
-                // 快速敌人 - 三角形
-                ctx.beginPath();
-                ctx.moveTo(enemy.x + enemy.width / 2, enemy.y + enemy.height);
-                ctx.lineTo(enemy.x, enemy.y);
-                ctx.lineTo(enemy.x + enemy.width, enemy.y);
-                ctx.closePath();
-                ctx.fill();
-            } else if (enemy.type === 2) {
-                // 发射子弹的敌人 - 方形
-                ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
-                
-                // 添加发射器指示
-                ctx.fillStyle = '#FF6B6B';
-                ctx.fillRect(enemy.x + enemy.width / 2 - 2, enemy.y + enemy.height - 5, 4, 5);
-            }
-            
-            // 绘制血量条
-            if (enemy.health < enemy.maxHealth) {
-                const barWidth = enemy.width;
-                const barHeight = 3;
-                const healthPercent = enemy.health / enemy.maxHealth;
-                
-                ctx.fillStyle = '#333';
-                ctx.fillRect(enemy.x, enemy.y - 8, barWidth, barHeight);
-                
-                ctx.fillStyle = healthPercent > 0.5 ? '#4ADE80' : healthPercent > 0.25 ? '#FBBF24' : '#EF4444';
-                ctx.fillRect(enemy.x, enemy.y - 8, barWidth * healthPercent, barHeight);
-            }
-            
+            // 修复后代码 - 添加射击敌人视觉标识
+} else if (enemy.type === 2) {
+    // 绘制方形身体
+    ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
+    
+    // 绘制炮塔
+    ctx.fillStyle = '#FF6B6B';
+    ctx.fillRect(enemy.x + enemy.width / 2 - 4, enemy.y, 8, 10);
+    
+    // 绘制射击指示器（当准备射击时闪烁）
+    const now = Date.now();
+    const timeSinceLastShot = now - enemy.lastFired;
+    const reloadProgress = Math.min(1, timeSinceLastShot / enemy.fireRate);
+    
+    if (reloadProgress > 0.8) {
+        ctx.fillStyle = `rgba(255, 100, 100, ${0.5 + 0.5 * Math.sin(now / 100)})`;
+        ctx.fillRect(enemy.x + enemy.width / 2 - 2, enemy.y + enemy.height - 3, 4, 8);
+    }
+}
             ctx.restore();
         }
 
@@ -838,16 +736,13 @@
             ctx.shadowColor = powerUp.color;
             ctx.shadowBlur = 15;
             
-            // 旋转效果
             ctx.translate(powerUp.x + powerUp.width / 2, powerUp.y + powerUp.height / 2);
             ctx.rotate(powerUp.rotation);
             
             if (powerUp.type === 'health') {
-                // 绘制十字形状
                 ctx.fillRect(-powerUp.width / 6, -powerUp.height / 2, powerUp.width / 3, powerUp.height);
                 ctx.fillRect(-powerUp.width / 2, -powerUp.height / 6, powerUp.width, powerUp.height / 3);
             } else if (powerUp.type === 'energy') {
-                // 绘制闪电形状
                 ctx.beginPath();
                 ctx.moveTo(-powerUp.width / 4, -powerUp.height / 2);
                 ctx.lineTo(powerUp.width / 4, -powerUp.height / 4);
@@ -878,14 +773,13 @@
                 const x = i * barWidth;
                 const y = canvas.height - barHeight;
                 
-                // 根据频段使用不同颜色
                 let hue;
                 if (i < config.visualizerBars / 3) {
-                    hue = 0; // 红色 - 低频
+                    hue = 0;
                 } else if (i < config.visualizerBars * 2 / 3) {
-                    hue = 120; // 绿色 - 中频
+                    hue = 120;
                 } else {
-                    hue = 240; // 蓝色 - 高频
+                    hue = 240;
                 }
                 
                 ctx.fillStyle = `hsl(${hue}, 70%, ${50 + barHeight / 4}%)`;
@@ -897,7 +791,6 @@
 
         // 游戏初始化
         function initGame() {
-            
             gameState.isRunning = true;
             gameState.isPaused = false;
             gameState.isOver = false;
@@ -931,7 +824,6 @@
             
             updateUI();
             
-            // 开始游戏循环
             requestAnimationFrame(gameLoop);
         }
 
@@ -957,23 +849,30 @@
                         gameState.lastBeatTime = Date.now();
                         resolve();
                     } else {
-                        gameState.music = new Audio();
-                        gameState.music.src = audioSource;
-                        gameState.currentMusic = audioSource;
+                        audioElement.src = audioSource;
+                        gameState.music = audioElement;
                         
-                        gameState.music.addEventListener('loadeddata', () => {
-                            const source = gameState.audioContext.createMediaElementSource(gameState.music);
-                            source.connect(gameState.analyser);
-                            gameState.analyser.connect(gameState.audioContext.destination);
-                            
-                            gameState.music.onended = endGame;
-                            
+                        // 处理跨域问题
+                        audioElement.crossOrigin = "anonymous";
+                        
+                        const source = gameState.audioContext.createMediaElementSource(audioElement);
+                        source.connect(gameState.analyser);
+                        gameState.analyser.connect(gameState.audioContext.destination);
+                        
+                        audioElement.addEventListener('ended', endGame);
+                        
+                        // 确保音频加载完成
+                        audioElement.addEventListener('canplaythrough', () => {
                             resolve();
                         });
                         
-                        gameState.music.addEventListener('error', reject);
+                        audioElement.addEventListener('error', (e) => {
+                            console.error('音频加载错误:', e);
+                            reject(new Error('音频加载失败'));
+                        });
                     }
                 } catch (error) {
+                    console.error('音频初始化错误:', error);
                     reject(error);
                 }
             });
@@ -991,7 +890,6 @@
                     gameState.lastBeatTime = now;
                     gameState.beatDetected = true;
                     
-                    // 显示节奏提示
                     showRhythmHint();
                     
                     if (beatPulse) {
@@ -1006,6 +904,7 @@
                     gameState.beatDetected = false;
                 }
                 
+                // 模拟音频特征数据
                 gameState.audioFeatures.lowFreq = 100 + Math.sin(now / 1000) * 50;
                 gameState.audioFeatures.midFreq = 80 + Math.cos(now / 800) * 40;
                 gameState.audioFeatures.highFreq = 60 + Math.sin(now / 600) * 30;
@@ -1013,11 +912,65 @@
                 
                 return { beat, note: gameState.audioFeatures.midFreq };
             } else {
-                analyzeAudioFeatures();
-                const beat = detectBeat();
+                if (!gameState.analyser || !gameState.dataArray) {
+                    return { beat: false, note: 0 };
+                }
                 
-                if (beat) {
-                    // 显示节奏提示
+                gameState.analyser.getByteFrequencyData(gameState.dataArray);
+                
+                // 计算平均能量
+                // 修复后代码（计算各频段能量）
+const bufferLength = gameState.dataArray.length;
+const sampleRate = gameState.audioContext.sampleRate;
+const nyquist = sampleRate / 2;
+const freqPerBin = nyquist / bufferLength;
+
+// 重新计算频段边界
+const lowEndIndex = Math.floor(config.frequencyBands.low.end / freqPerBin);
+const midEndIndex = Math.floor(config.frequencyBands.mid.end / freqPerBin);
+const highEndIndex = Math.floor(config.frequencyBands.high.end / freqPerBin);
+
+let lowSum = 0, midSum = 0, highSum = 0;
+for (let i = 0; i < bufferLength; i++) {
+    if (i < lowEndIndex) {
+        lowSum += gameState.dataArray[i];
+    } else if (i < midEndIndex) {
+        midSum += gameState.dataArray[i];
+    } else if (i < highEndIndex) {
+        highSum += gameState.dataArray[i];
+    }
+}
+
+// 计算每个频段的平均能量
+gameState.audioFeatures.lowFreq = lowSum / (lowEndIndex || 1);
+gameState.audioFeatures.midFreq = midSum / (midEndIndex - lowEndIndex || 1);
+gameState.audioFeatures.highFreq = highSum / (highEndIndex - midEndIndex || 1);
+
+// 计算总平均能量
+const totalSum = lowSum + midSum + highSum;
+const avgEnergy = totalSum / bufferLength;
+gameState.audioFeatures.energy = avgEnergy;
+                
+                // 简单的节拍检测
+                const now = Date.now();
+                const timeSinceLastBeat = now - gameState.lastBeatTime;
+                
+                // 动态调整节拍阈值
+                gameState.beatHistory.push(avgEnergy);
+                if (gameState.beatHistory.length > 30) {
+                    gameState.beatHistory.shift();
+                    
+                    const avgHistory = gameState.beatHistory.reduce((a, b) => a + b) / gameState.beatHistory.length;
+                    const variance = gameState.beatHistory.reduce((sum, val) => sum + Math.pow(val - avgHistory, 2), 0) / gameState.beatHistory.length;
+                    const stdDev = Math.sqrt(variance);
+                    
+                    gameState.adaptiveBeatThreshold = avgHistory + stdDev * 1.5;
+                }
+                
+                const isBeat = avgEnergy > gameState.adaptiveBeatThreshold && timeSinceLastBeat > gameState.beatInterval * 0.5;
+                
+                if (isBeat) {
+                    gameState.lastBeatTime = now;
                     showRhythmHint();
                     
                     if (beatPulse) {
@@ -1028,22 +981,22 @@
                             beatPulse.style.transform = 'scale(1)';
                         }, 100);
                     }
+                    
+                    return { beat: true, note: avgEnergy };
                 }
                 
-                return { beat, note: gameState.audioFeatures.spectralCentroid };
+                return { beat: false, note: avgEnergy };
             }
         }
 
         // 显示节奏提示
         function showRhythmHint() {
-            // 音符跳动动画
             if (rhythmNote) {
                 rhythmNote.style.opacity = '1';
                 rhythmNote.style.transform = 'scale(1.2)';
                 rhythmNote.style.boxShadow = '0 0 20px rgba(255, 193, 7, 0.8)';
                 rhythmNote.classList.add('note-bounce');
                 
-                // 移除动画类和重置样式
                 setTimeout(() => {
                     rhythmNote.classList.remove('note-bounce');
                     rhythmNote.style.opacity = '0.3';
@@ -1076,7 +1029,6 @@
             rewardPopup.querySelector('div').textContent = word;
             rewardPopup.classList.add('reward-popup');
             
-            // 2秒后移除动画类
             setTimeout(() => {
                 rewardPopup.classList.remove('reward-popup');
             }, 2000);
@@ -1085,13 +1037,18 @@
         // 根据音乐调整游戏难度
         function adjustDifficulty() {
             const timeSinceStart = Date.now() - gameState.gameStartTime;
-            const baseDifficulty = 1 + Math.floor(timeSinceStart / config.difficultyIncreaseRate) * 0.15; // 降低难度增长率
+            const baseDifficulty = 1 + Math.floor(timeSinceStart / config.difficultyIncreaseRate) * 0.15;
             
             const energyFactor = gameState.audioFeatures.energy / 255;
-            gameState.difficulty = baseDifficulty * (0.8 + energyFactor * 0.3); // 降低难度系数
+            gameState.difficulty = baseDifficulty * (0.8 + energyFactor * 0.3);
             
             if (difficultyLevel) {
                 difficultyLevel.textContent = gameState.difficulty.toFixed(1);
+            }
+            // 增加难度时提高特殊敌人出现的概率
+            if (gameState.difficulty > 1.5) {
+                config.frequencyBands.low.end = 100; // 调整频段范围
+                config.frequencyBands.mid.end = 300;
             }
         }
 
@@ -1120,78 +1077,178 @@
             
             powerUps.push(powerUp);
         }
-
-        // 根据音乐特征生成敌人
         function spawnEnemy() {
-            const now = Date.now();
-            
-            const lowFreqFactor = gameState.audioFeatures.lowFreq / 255;
-            const spawnRate = config.enemySpawnRate / (gameState.difficulty * (0.4 + lowFreqFactor * 0.6)); // 降低生成频率
-            
-            if (now - config.lastEnemySpawn < spawnRate) return;
-            
-            config.lastEnemySpawn = now;
-            
-            const highFreqFactor = gameState.audioFeatures.highFreq / 255;
-            const midFreqFactor = gameState.audioFeatures.midFreq / 255;
-            
-            let enemyType;
-            if (highFreqFactor > 0.8) { // 提高阈值
-                enemyType = 1;
-            } else if (midFreqFactor > 0.7) { // 提高阈值
-                enemyType = 2;
-            } else {
-                enemyType = 0;
-            }
-            
-            let color, speed, health, points, fireRate;
-            
-            switch (enemyType) {
-                case 0:
-                    color = '#EC4899';
-                    speed = config.enemyMinSpeed + lowFreqFactor * (config.enemyMaxSpeed - config.enemyMinSpeed);
-                    health = 1;
-                    points = 10;
-                    fireRate = 0;
-                    break;
-                case 1:
-                    color = '#8B5CF6';
-                    speed = config.enemyMinSpeed * 1.5 + highFreqFactor * (config.enemyMaxSpeed - config.enemyMinSpeed) * 0.8; // 降低速度
-                    health = 1;
-                    points = 15;
-                    fireRate = 0;
-                    break;
-                case 2:
-                    color = '#10B981';
-                    speed = config.enemyMinSpeed + midFreqFactor * (config.enemyMaxSpeed - config.enemyMinSpeed) * 0.6; // 降低速度
-                    health = 2;
-                    points = 20;
-                    fireRate = 3000 / (gameState.difficulty * (0.4 + midFreqFactor * 0.6)); // 降低发射频率
-                    break;
-            }
-            
-            // 在随机列中生成敌人
-            const column = getRandomColumn();
-            const x = getColumnCenter(column) - config.enemySize / 2;
-            
-            const enemy = {
-                x,
-                y: -config.enemySize,
-                width: config.enemySize,
-                height: config.enemySize,
-                color,
-                speed: speed * gameState.difficulty * 0.8, // 降低整体速度
-                health,
-                maxHealth: health,
-                points,
-                fireRate,
-                lastFired: 0,
-                type: enemyType,
-                column: column
-            };
-            
-            enemies.push(enemy);
-        }
+    const now = Date.now();
+    
+    const lowFreqFactor = gameState.audioFeatures.lowFreq / 255;
+    const spawnRate = config.enemySpawnRate / (gameState.difficulty * (0.4 + lowFreqFactor * 0.6));
+    
+    if (now - config.lastEnemySpawn < spawnRate) return;
+    
+    config.lastEnemySpawn = now;
+    
+    const highFreqFactor = gameState.audioFeatures.highFreq / 255;
+    const midFreqFactor = gameState.audioFeatures.midFreq / 255;
+    //const lowFreqFactor = gameState.audioFeatures.lowFreq / 255;
+    
+    // 修复敌人类型生成逻辑 - 使用更合理的阈值和随机组合
+    // 修复后代码 - 确保射击敌人有足够概率生成
+let enemyType = 0; // 默认普通敌人
+const rand = Math.random();
+
+// 根据游戏难度调整敌人类型概率
+const shootingEnemyChance = 0.4 + (gameState.difficulty * 0.1); // 难度越高，射击敌人出现概率越大
+const fastEnemyChance = 0.5 + (gameState.difficulty * 0.05); // 难度越高，快速敌人出现概率越大
+
+// 优先检查射击敌人条件（中频能量）
+if (midFreqFactor > 0.25 && rand < shootingEnemyChance) {
+    enemyType = 2; // 绿色方形：射击敌人
+} 
+// 然后检查快速敌人条件（高频能量）
+else if (highFreqFactor > 0.3 && rand < fastEnemyChance) {
+    enemyType = 1; // 紫色三角：快速敌人
+} 
+// 最后是普通敌人（低频能量）
+else if (lowFreqFactor > 0.3) {
+    enemyType = 0; // 粉色圆形：普通敌人
+}
+
+// 确保至少有一定比例的射击敌人
+if (enemies.length > 10) {
+    const shootingEnemyCount = enemies.filter(e => e.type === 2).length;
+    const shootingEnemyRatio = shootingEnemyCount / enemies.length;
+    
+    // 如果射击敌人比例低于20%，强制生成一个
+    if (shootingEnemyRatio < 0.2 && rand < 0.7) {
+        enemyType = 2;
+    }
+}
+    
+    let color, speed, health, points, fireRate;
+    
+    switch (enemyType) {
+        case 0: // 普通敌人
+            color = '#EC4899';
+            speed = config.enemyMinSpeed + lowFreqFactor * (config.enemyMaxSpeed - config.enemyMinSpeed);
+            health = 1;
+            points = 10;
+            fireRate = 0;
+            break;
+        case 1: // 快速敌人
+            color = '#8B5CF6';
+            speed = config.enemyMinSpeed * 1.8 + highFreqFactor * (config.enemyMaxSpeed - config.enemyMinSpeed);
+            health = 1;
+            points = 15;
+            fireRate = 0;
+            break;
+        case 2: // 射击敌人
+            color = '#10B981';
+            speed = config.enemyMinSpeed + midFreqFactor * (config.enemyMaxSpeed - config.enemyMinSpeed) * 0.6;
+            health = 2;
+            points = 20;
+            fireRate = 3000 / (gameState.difficulty * (0.4 + midFreqFactor * 0.6));
+            break;
+    }
+    
+    const column = getRandomColumn();
+    const x = getColumnCenter(column) - config.enemySize / 2;
+    
+    const enemy = {
+        x,
+        y: -config.enemySize,
+        width: config.enemySize,
+        height: config.enemySize,
+        color,
+        speed: speed * gameState.difficulty * 0.8,
+        health,
+        maxHealth: health,
+        points,
+        fireRate,
+        lastFired: 0,
+        type: enemyType,
+        column: column
+    };
+    
+    enemies.push(enemy);
+    
+    // 调试信息 - 显示当前生成的敌人类型和频段能量
+    console.log(`生成敌人: ${['普通', '快速', '射击'][enemyType]}, 
+    低频: ${gameState.audioFeatures.lowFreq.toFixed(1)}, 
+    中频: ${gameState.audioFeatures.midFreq.toFixed(1)}, 
+    高频: ${gameState.audioFeatures.highFreq.toFixed(1)}`);
+}
+        // 根据音乐特征生成敌人
+//         function spawnEnemy() {
+//     const now = Date.now();
+    
+//     const lowFreqFactor = gameState.audioFeatures.lowFreq / 255;
+//     const spawnRate = config.enemySpawnRate / (gameState.difficulty * (0.4 + lowFreqFactor * 0.6));
+    
+//     if (now - config.lastEnemySpawn < spawnRate) return;
+    
+//     config.lastEnemySpawn = now;
+    
+//     const highFreqFactor = gameState.audioFeatures.highFreq / 255;
+//     const midFreqFactor = gameState.audioFeatures.midFreq / 255;
+    
+//     // 修复敌人类型生成逻辑 - 降低阈值，增加随机性
+//     const rand = Math.random();
+//     let enemyType;
+//     if (highFreqFactor > 0.5 && rand < 0.7) {
+//         enemyType = 1; // 紫色三角：快速敌人
+//     } else if (midFreqFactor > 0.4 && rand < 0.7) {
+//         enemyType = 2; // 绿色方形：射击敌人
+//     } else {
+//         enemyType = 0; // 粉色圆形：普通敌人
+//     }
+    
+//     let color, speed, health, points, fireRate;
+    
+//     switch (enemyType) {
+//         case 0: // 普通敌人
+//             color = '#EC4899';
+//             speed = config.enemyMinSpeed + lowFreqFactor * (config.enemyMaxSpeed - config.enemyMinSpeed);
+//             health = 1;
+//             points = 10;
+//             fireRate = 0;
+//             break;
+//         case 1: // 快速敌人
+//             color = '#8B5CF6';
+//             speed = config.enemyMinSpeed * 1.8 + highFreqFactor * (config.enemyMaxSpeed - config.enemyMinSpeed);
+//             health = 1;
+//             points = 15;
+//             fireRate = 0;
+//             break;
+//         case 2: // 射击敌人
+//             color = '#10B981';
+//             speed = config.enemyMinSpeed + midFreqFactor * (config.enemyMaxSpeed - config.enemyMinSpeed) * 0.6;
+//             health = 2;
+//             points = 20;
+//             fireRate = 3000 / (gameState.difficulty * (0.4 + midFreqFactor * 0.6));
+//             break;
+//     }
+    
+//     const column = getRandomColumn();
+//     const x = getColumnCenter(column) - config.enemySize / 2;
+    
+//     const enemy = {
+//         x,
+//         y: -config.enemySize,
+//         width: config.enemySize,
+//         height: config.enemySize,
+//         color,
+//         speed: speed * gameState.difficulty * 0.8,
+//         health,
+//         maxHealth: health,
+//         points,
+//         fireRate,
+//         lastFired: 0,
+//         type: enemyType,
+//         column: column
+//     };
+    
+//     enemies.push(enemy);
+// }
 
         // 玩家射击
         function playerShoot(beat) {
@@ -1203,9 +1260,8 @@
             const bulletX = player.x + player.width / 2 - config.bulletSize / 2;
             const bulletY = player.y - config.bulletSize;
             
-            // 检查是否在节拍窗口内
             const timeSinceLastBeat = now - gameState.lastBeatTime;
-            const beatWindow = 300; // 节拍窗口300毫秒
+            const beatWindow = 300;
             const isSynced = beat || (timeSinceLastBeat < beatWindow);
             
             const bulletColor = isSynced ? '#F59E0B' : '#6366F1';
@@ -1219,7 +1275,6 @@
                 
                 showFeedback("完美节奏！", "#F59E0B");
                 
-                // 检查连续节奏射击奖励
                 if (gameState.rhythmStreak >= 5 && gameState.rhythmStreak % 5 === 0) {
                     showRewardWord(gameState.rhythmStreak);
                 }
@@ -1232,9 +1287,7 @@
                 
                 createParticles(bulletX + config.bulletSize / 2, bulletY + config.bulletSize / 2, 5, '#F59E0B');
             } else {
-                // 重置连续节奏射击计数
                 gameState.rhythmStreak = 0;
-                
                 gameState.energy = Math.min(101, gameState.energy + config.energyGainPerHit);
                 
                 if (gameState.comboTimer <= 0) {
@@ -1256,18 +1309,13 @@
 
         // 特殊技能：节奏爆破
         function useSpecialSkill() {
-            console.log('useSpecialSkill被调用，当前能量:', gameState.energy); // 调试信息
-            
             if (gameState.energy < 99) {
                 showFeedback("能量不足！需要100%能量", "#FF4444");
-                console.log('能量不足，当前能量:', gameState.energy); // 调试信息
                 return;
             }
             
-            console.log('执行爆破技能'); // 调试信息
             gameState.energy = 0;
             
-            // 创建全屏爆破效果
             for (let i = 0; i < 20; i++) {
                 explosions.push({
                     x: Math.random() * canvas.width,
@@ -1278,7 +1326,6 @@
                 });
             }
             
-            // 创建中心大爆炸
             explosions.push({
                 x: canvas.width / 2,
                 y: canvas.height / 2,
@@ -1287,27 +1334,22 @@
                 maxLife: 50
             });
             
-            // 创建粒子效果
             createParticles(canvas.width / 2, canvas.height / 2, 80, '#8B5CF6');
             
-            // 消灭所有敌人和敌人子弹
             const enemiesDestroyed = enemies.length;
             enemies.forEach(enemy => {
-                gameState.score += enemy.points * gameState.combo * 2; // 爆破有额外分数加成
+                gameState.score += enemy.points * gameState.combo * 2;
                 createParticles(enemy.x + enemy.width / 2, enemy.y + enemy.height / 2, 12, enemy.color);
             });
             
-            // 清空所有敌人和敌人子弹
             enemies.length = 0;
             enemyBullets.length = 0;
             
-            // 增加连击
             gameState.combo += 5;
             gameState.comboTimer = config.comboTime;
             gameState.maxCombo = Math.max(gameState.maxCombo, gameState.combo);
             
             showFeedback(`节奏爆破！消灭${enemiesDestroyed}个敌人`, "#8B5CF6");
-            console.log('爆破完成，消灭敌人数量:', enemiesDestroyed); // 调试信息
         }
 
         // 显示反馈信息
@@ -1343,39 +1385,34 @@
         function updateGame(deltaTime) {
             if (gameState.isPaused || gameState.isOver) return;
             
-            const { beat, note } = analyzeAudio();
+            const { beat } = analyzeAudio();
             
             adjustDifficulty();
             
             spawnEnemy();
             spawnPowerUp();
             
-            // 玩家左右移动（列切换）
             if (keys.left && player.currentColumn > 0) {
                 player.currentColumn--;
                 player.x = config.columnBorders[player.currentColumn] + config.columnWidth / 2 - player.width / 2;
-                keys.left = false; // 防止连续切换
+                keys.left = false;
             }
             if (keys.right && player.currentColumn < config.columns - 1) {
                 player.currentColumn++;
                 player.x = config.columnBorders[player.currentColumn] + config.columnWidth / 2 - player.width / 2;
-                keys.right = false; // 防止连续切换
+                keys.right = false;
             }
             
-            // 玩家射击（只有按下空格键时才射击）
             if (keys.shoot) {
                 playerShoot(beat);
-                keys.shoot = false; // 防止连续射击，需要重新按键
+                keys.shoot = false;
             }
             
-            // 特殊技能
             if (keys.special) {
-                console.log('检测到X键按下，调用useSpecialSkill'); // 调试信息
                 useSpecialSkill();
-                keys.special = false; // 防止连续触发
+                keys.special = false;
             }
             
-            // 更新玩家子弹
             for (let i = player.bullets.length - 1; i >= 0; i--) {
                 const bullet = player.bullets[i];
                 bullet.y -= bullet.speed;
@@ -1385,7 +1422,6 @@
                     continue;
                 }
                 
-                // 检查与敌人的碰撞
                 for (let j = enemies.length - 1; j >= 0; j--) {
                     const enemy = enemies[j];
                     if (checkCollision(bullet, enemy)) {
@@ -1398,7 +1434,6 @@
                             gameState.score += enemy.points * gameState.combo;
                             gameState.comboTimer = config.comboTime;
                             
-                            // 击败敌人时增加能量
                             gameState.energy = Math.min(101, gameState.energy + config.energyGainPerHit);
                             
                             createParticles(enemy.x + enemy.width / 2, enemy.y + enemy.height / 2, 8, enemy.color);
@@ -1418,34 +1453,44 @@
                 }
             }
             
-            // 更新敌人
             for (let i = enemies.length - 1; i >= 0; i--) {
                 const enemy = enemies[i];
                 enemy.y += enemy.speed;
                 
-                // 移除超出屏幕的敌人
                 if (enemy.y > canvas.height) {
                     enemies.splice(i, 1);
                     continue;
                 }
                 
-                // 敌人射击
-                if (enemy.fireRate > 0) {
-                    const now = Date.now();
-                    if (now - enemy.lastFired > enemy.fireRate) {
-                        enemy.lastFired = now;
-                        
-                        enemyBullets.push({
-                            x: enemy.x + enemy.width / 2 - 3,
-                            y: enemy.y + enemy.height,
-                            width: 6,
-                            height: 12,
-                            speed: 4
-                        });
-                    }
-                }
+               // 修复后代码 - 确保射击敌人能发射子弹
+if (enemy.type === 2) { // 只有射击敌人才会发射子弹
+    const now = Date.now();
+    
+    // 根据游戏难度调整射击频率
+    const adjustedFireRate = enemy.fireRate / (gameState.difficulty * 0.8);
+    
+    if (now - enemy.lastFired > adjustedFireRate) {
+        enemy.lastFired = now;
+        
+        // 创建子弹
+        enemyBullets.push({
+            x: enemy.x + enemy.width / 2 - 3,
+            y: enemy.y + enemy.height,
+            width: 6,
+            height: 12,
+            speed: 4 + (gameState.difficulty * 0.5) // 难度越高子弹越快
+        });
+        
+        // 添加射击效果
+        createParticles(
+            enemy.x + enemy.width / 2, 
+            enemy.y + enemy.height,
+            5, 
+            '#FF5555'
+        );
+    }
+}
                 
-                // 检查与玩家的碰撞
                 if (checkCollision(enemy, player)) {
                     gameState.health--;
                     createParticles(enemy.x + enemy.width / 2, enemy.y + enemy.height / 2, 10, '#FF4444');
@@ -1458,7 +1503,6 @@
                 }
             }
             
-            // 更新敌人子弹
             for (let i = enemyBullets.length - 1; i >= 0; i--) {
                 const bullet = enemyBullets[i];
                 bullet.y += bullet.speed;
@@ -1468,7 +1512,6 @@
                     continue;
                 }
                 
-                // 检查与玩家的碰撞
                 if (checkCollision(bullet, player)) {
                     gameState.health--;
                     createParticles(bullet.x, bullet.y, 5, '#FF4444');
@@ -1481,7 +1524,6 @@
                 }
             }
             
-            // 更新道具
             for (let i = powerUps.length - 1; i >= 0; i--) {
                 const powerUp = powerUps[i];
                 powerUp.y += powerUp.speed;
@@ -1492,13 +1534,12 @@
                     continue;
                 }
                 
-                // 检查与玩家的碰撞
                 if (checkCollision(powerUp, player)) {
                     if (powerUp.type === 'health') {
                         gameState.health = Math.min(3, gameState.health + 1);
                         showFeedback("生命恢复！", "#4ADE80");
                     } else if (powerUp.type === 'energy') {
-                        gameState.energy = Math.min(100, gameState.energy + 30); // 增加能量道具的恢复量
+                        gameState.energy = Math.min(100, gameState.energy + 30);
                         showFeedback("能量增加！", "#FBBF24");
                     }
                     
@@ -1507,7 +1548,6 @@
                 }
             }
             
-            // 更新爆炸效果
             for (let i = explosions.length - 1; i >= 0; i--) {
                 const explosion = explosions[i];
                 explosion.life--;
@@ -1517,7 +1557,6 @@
                 }
             }
             
-            // 更新粒子
             for (let i = particles.length - 1; i >= 0; i--) {
                 const particle = particles[i];
                 particle.x += particle.vx;
@@ -1529,7 +1568,6 @@
                 }
             }
             
-            // 更新连击计时器
             if (gameState.comboTimer > 0) {
                 gameState.comboTimer -= deltaTime / 1000;
                 if (gameState.comboTimer <= 0) {
@@ -1537,7 +1575,6 @@
                 }
             }
             
-            // 能量自然衰减
             if (gameState.energy > 0) {
                 gameState.energy = Math.max(0, gameState.energy - config.energyLossRate * deltaTime / 1000);
             }
@@ -1558,17 +1595,11 @@
 
         // 渲染游戏
         function render() {
-            // 清空画布
             ctx.fillStyle = '#1E1B4B';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            // 绘制音频可视化
             drawAudioVisualizer();
-            
-            // 绘制四列边框
             drawColumnBorders();
-            
-            // 绘制游戏元素
             drawPlayer();
             
             player.bullets.forEach(drawBullet);
@@ -1599,15 +1630,13 @@
             
             if (gameState.isPaused) {
                 pauseMenu.classList.remove('hidden');
-                if (gameState.music && !gameState.music.paused) {
-                    gameState.music.pause();
-                    audioPlayer.pause();
+                if (gameState.currentMusic !== 'demo') {
+                    audioElement.pause();
                 }
             } else {
                 pauseMenu.classList.add('hidden');
-                if (gameState.music && gameState.music.paused) {
-                    audioPlayer.src = gameState.music;
-                    audioPlayer.play();
+                if (gameState.currentMusic !== 'demo') {
+                    audioElement.play();
                 }
             }
         }
@@ -1617,15 +1646,12 @@
             gameState.isOver = true;
             gameState.isRunning = false;
             
-            if (gameState.music) {
-                gameState.music.pause();
-                audioPlayer.pause();
+            if (gameState.currentMusic !== 'demo') {
+                audioElement.pause();
             }
             
-            // 显示游戏结束界面
             gameOverScreen.classList.remove('hidden');
             
-            // 更新最终统计
             if (finalScore) finalScore.textContent = gameState.score;
             if (maxCombo) maxCombo.textContent = `x${gameState.maxCombo}`;
             if (syncRate) {
@@ -1643,9 +1669,9 @@
             gameOverScreen.classList.add('hidden');
             pauseMenu.classList.add('hidden');
             
-            if (gameState.music) {
-                gameState.music.currentTime = 0;
-                gameState.music.play();
+            if (gameState.currentMusic !== 'demo') {
+                audioElement.currentTime = 0;
+                audioElement.play();
             }
             
             initGame();
@@ -1657,15 +1683,22 @@
             gameState.isOver = false;
             gameState.isPaused = false;
             
-            if (gameState.music) {
-                gameState.music.pause();
-                gameState.music.currentTime = 0;
+            if (gameState.currentMusic !== 'demo') {
+                audioElement.pause();
+                audioElement.currentTime = 0;
             }
             
             gameOverScreen.classList.add('hidden');
             pauseMenu.classList.add('hidden');
             gameUI.classList.add('hidden');
             startScreen.classList.remove('hidden');
+            
+            player.bullets = [];
+            enemies.length = 0;
+            enemyBullets.length = 0;
+            explosions.length = 0;
+            powerUps.length = 0;
+            particles.length = 0;
         }
 
         // 开始游戏
@@ -1673,21 +1706,25 @@
             try {
                 startScreen.classList.add('hidden');
                 gameUI.classList.remove('hidden');
+                musicLoading.classList.remove('hidden');
+                musicError.classList.add('hidden');
                 
                 await initAudio(musicSource);
                 
-                if ( musicSource !== 'demo') {
-                    audioPlayer.src = musicSource;
-                    audioPlayer.play();
+                if (musicSource !== 'demo') {
+                    audioElement.play().catch(e => {
+                        console.error('播放失败:', e);
+                        musicError.classList.remove('hidden');
+                        gameState.currentMusic = 'demo';
+                    });
                 }
                 
+                musicLoading.classList.add('hidden');
                 initGame();
             } catch (error) {
                 console.error('音频初始化失败:', error);
-                alert('音频初始化失败，将使用演示模式');
-                
-                startScreen.classList.add('hidden');
-                gameUI.classList.remove('hidden');
+                musicLoading.classList.add('hidden');
+                musicError.classList.remove('hidden');
                 
                 gameState.currentMusic = 'demo';
                 gameState.beatInterval = 500;
@@ -1738,26 +1775,21 @@
             if (file) {
                 const url = URL.createObjectURL(file);
                 
-                // 移除之前的自定义音乐选择器
                 const existingCustom = document.querySelector('.music-selector[data-music^="blob:"]');
                 if (existingCustom) {
                     existingCustom.remove();
                 }
                 
-                // 创建新的音乐选择器
                 const customSelector = document.createElement('button');
                 customSelector.className = 'music-selector px-4 py-2 bg-dark/60 border border-light/20 hover:border-primary rounded-md text-sm transition-all selected border-primary';
                 customSelector.dataset.music = url;
                 customSelector.textContent = file.name.substring(0, 20) + (file.name.length > 20 ? '...' : '');
                 
-                // 添加到音乐选择器容器
                 const container = document.querySelector('.flex.flex-wrap.justify-center.gap-3.mt-4');
                 container.appendChild(customSelector);
                 
-                // 移除其他选择器的选中状态
                 musicSelectors.forEach(s => s.classList.remove('selected', 'border-primary'));
                 
-                // 添加事件监听器
                 customSelector.addEventListener('click', () => {
                     document.querySelectorAll('.music-selector').forEach(s => s.classList.remove('selected', 'border-primary'));
                     customSelector.classList.add('selected', 'border-primary');
@@ -1770,4 +1802,3 @@
     </script>
 </body>
 </html>
-

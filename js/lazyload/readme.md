@@ -44,4 +44,15 @@
   自定义属性 data- 数据属性
   图片的原地址是img 数据
   original 原来
-    
+- 性能问题  
+  - 解决了性能问题  解决了首屏加载速度问题 静态页面的渲染性能
+  - 带来了新的问题 onScroll 滚动事件触发太频繁 JS的性能问题
+  - forEach imgs
+  - getBoundingClientRect() 触发回流，样式的重新计算，为了精确计算各个元素的位置，进行一次回流，消耗大
+- 防抖 节流
+- IntersectionObserver:原生的异步API,浏览器会在后台线程中，对元素进行监听，当元素进入可视区，就会触发回调函数
+就相当于onScroll和getBoundingClientRect()的结合体
+   - observer观察 异步的，浏览器的后台
+   - intersection rect 和可视区域交叉
+   - 不再需要onscroll事件了 不需要节流了
+   - 独立的现代浏览器API,并发html5的新特性
