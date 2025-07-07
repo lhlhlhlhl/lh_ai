@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>事件委托</title>
+</head>
+<body>
+    <ul id="myList">
+        <!-- li{item$}*4 -->
+        <li>item1</li>
+        <li>item2</li>
+        <li>item3</li>
+        <li>item4</li>
+
+    </ul>
+</body>
+<script>
+    //点击li 输出 li的内容
+    //一次性给所有li注册事件吗？不可以
+     const lis = document.querySelectorAll('ul#myList li');
+    // lis.addEventListener('click',function(event){
+    //     console.log(event.target.textContent);
+    // },false)
+
+    //es6新的循环 不去使用计数循环let i=0;i<lis.length;i++，计数循环对CPU更友好，机械，可读性差
+
+    // for(let item of lis){//更语义化，不需要用下标i
+    //     //向浏览器event loop注册了一堆事件， 监听器？
+    //     //如果li很多，那么注册的事件也会很多，占用内存，性能差
+    //     item.addEventListener('click',function(event){
+    //         console.log(event.target.textContent);
+    //     },false)
+
+    // }
+    document.getElementById('myList').addEventListener('click', function(event) {
+            console.log(event.target.textContent);
+        },true)
+
+</script>
+</html>

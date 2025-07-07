@@ -7,6 +7,10 @@ const PictureCard = (props)=>{
         audio
     } = props
     const [imgPreview,setImgPreview]= useState('https://res.bearbobo.com/resource/upload/W44yyxvl/upload-ih56twxirei.png')
+    const playAudio = () => {
+        const audioEle = new Audio(audio);
+        audioEle.play();
+    }
     const uploadeImgData = (e) => {
         const file = (e.target).files?.[0];
         if (!file) { return; }
@@ -21,6 +25,7 @@ const PictureCard = (props)=>{
             }
             reader.onerror = (error) => { reject(error); };
         })
+       
     }
 
     return (
@@ -36,6 +41,11 @@ const PictureCard = (props)=>{
             {/* htmlFor="selectImage"点击标签时会自动触发文件选择对话框 */}
             </label>
             <div className="word">{word}</div>
+            {audio && (
+                <div className="playAudio" onClick={playAudio}>
+                    <img width="20px" src="https://res.bearbobo.com/resource/upload/Omq2HFs8/playA-3iob5qyckpa.png" alt="logo" />
+                </div>
+            )}
         </div>
     )
 }
