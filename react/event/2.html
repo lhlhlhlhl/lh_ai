@@ -33,6 +33,8 @@
     //     },false)
 
     // }
+    //event.target 目标阶段 事件发生在的元素，而不是事件监听的元素
+    //委托给父元素，react性能优化到了极致，#root 挂载点
     document.getElementById('myList').addEventListener('click', function(event) {
             console.log(event.target.textContent);
         },true)
