@@ -26,4 +26,28 @@
       从event.target 冒泡到最外层html  回去到根
       事件让他在冒泡阶段执行
       事件在哪个阶段执行
-  
+
+## 事件委托优势 delegation
+不能在一推按钮上绑定事件
+- 性能优化
+   - 极致将事件委托给最外层元素
+   react 大型项目开发
+   给我们的节点event.target 添加一个唯一属性
+- 动态节点的事件
+  滚动到底部，一次新增一堆的新元素
+  事件委托可以有效解决
+- 同一元素同一事件注册多次
+  - dom节点
+  - event type 事件类型
+  - 监听器（回调函数） event loop中
+    event 对象
+  - useCapture
+  - event.preventDefault() 阻止默认行为
+     form submit 阻止表单提交，阻止默认行为
+     a 阻止跳转，阻止默认行为
+  - event.stopPropagation() 阻止冒泡
+- 用户交互的便利体验
+   - toggle按钮 状态切换
+   - 点击页面任何地方可以关闭 方便 stopPropagation
+   - 显示区域可以交互 stopPropagation
+ 
