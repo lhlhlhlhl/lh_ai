@@ -26,3 +26,29 @@
     - 移动端的重要单位 px像素点单位不要用 绝对单位
        移动端 宽高不定的 用相对单位 rem（html font-size） vw/vh(viewport) em(相当于自身的font-size)
        使用相对单位，可以在所以设备上适配
+- props  组件通信
+    - 传递状态
+    - 传递自定义事件
+    - 直接解构
+      const{
+         todos,//任务
+         onAddTodo//添加
+      } = props（一行一个数据状态或者函数，方便些注释）
+
+- 数据绑定
+   - 变量 修改值
+   - 数据状态
+      - Data Binding **数据**绑定 jsx就是静态的
+      {}数据绑定
+      - 数据和界面状态的统一
+         - 界面由数据驱动
+         - 数据与页面状态的一致性
+      - 响应式的
+- vue和react区别
+   - vue 好入门，api文档好用
+   - react 倾向于原生JS 入门难
+      - hooks? 
+   - <input v-model="text"/>
+     vue双向数据绑定
+     <input value={text} onChange = {() => setText(text);}>
+     react坚持单向数据绑定

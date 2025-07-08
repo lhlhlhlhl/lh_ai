@@ -50,4 +50,10 @@
    - toggle按钮 状态切换
    - 点击页面任何地方可以关闭 方便 stopPropagation
    - 显示区域可以交互 stopPropagation
- 
+- SyntheticEvent 合成事件
+   - 委托 #root 
+      性能优化 框架帮我们做
+   - 事件池 Event pooling
+      事件对象的回收利用
+      大型密集交互的应用
+   - 最近的版本中又可以安全使用
