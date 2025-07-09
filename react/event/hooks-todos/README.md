@@ -52,3 +52,53 @@
      vue双向数据绑定
      <input value={text} onChange = {() => setText(text);}>
      react坚持单向数据绑定
+
+- 本地存储
+   - **localStorage 和 cookie有什么异同**
+   - http是无状态的,head cookie 带上
+   - cookie 太大,影响http性能 4KB
+   - cookie 前端,后端都可以设置
+      过期时间  document.cookie = "qindi=value; max-age=30;";
+      domain 域名 隔离
+   - localStorage 只在浏览器端
+     domain
+     todos
+     5MB
+   - IndexDB 数据库 GB
+   - localStorage  html5
+       key:value 存储
+       setItem(key,value)
+       getItem(key)
+       removeItem(key)
+   
+   - BOM Browser Object Model  超出浏览器的可见区域:收藏夹,历史记录之类的
+   - DOM Document Object Model 浏览器的可见区域
+
+## 自定义hooks
+  - 自己定义的
+  - use
+  - 某一项功能
+     不是一个简单函数的封装
+     可以包含响应式的状态
+            effect
+            todos -> hooks
+  - 自定义hooks
+     - 现代react app架构的一部分
+     - hooks目录
+        自定义的hooks
+        框架只能做公共部分
+        业务定制 ahooks
+     - use开头
+        state,effect 逻辑封装复用
+     - return 
+        todos
+        toggle
+        addTodos
+        deleteTodos
+        函数式编程思想的体现
+   - 组件更好地聚焦于模板渲染
+   - 全面hooks函数式编程
+
+- 两个遗憾
+   - ../../路径曲折  
+       vite 配置alias 短路径

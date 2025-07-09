@@ -6,9 +6,11 @@
     <title>防抖节流</title>
 </head>
 <body>
+    <h2>没有防抖</h2>
     <input type="text" id="inputA">
     <br>
     <br>
+    <h2>进行了防抖</h2>
     <input type="text" id="inputB">
     <br>
     <br>
@@ -35,7 +37,7 @@
                 },delay)//fn.id,定时器的把柄
             }
         }
-        
+
         inputA.addEventListener('keyup',function(event){
             //如果执行的是耗时任务
             //google suggest搜索建议 如果这个触发频率太高 服务器宕机
