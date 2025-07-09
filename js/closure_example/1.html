@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>防抖节流</title>
+</head>
+<body>
+    <input type="text" id="inputA">
+    <br>
+    <br>
+    <input type="text" id="inputB">
+    <br>
+    <br>
+    <script>
+        let inputA = document.getElementById('inputA')
+        let inputB = document.getElementById('inputB')
+        //google sugguest ajax api call
+        function ajax(content){
+            console.log('ajax request'+content)
+        }
+        //函数的参数或者返回值也是函数,高阶函数
+        //通用函数 抽象, fn 任何函数减少执行频率
+        function debounce(fn,delay){
+            
+            return function(args){
+                //定时器返回ID
+                //fn是自由变量
+                //fn 一等对象
+                //fn.id添加函数的属性
+                //自由变量是什么
+                clearTimeout(fn.id)
+                fn.id=setTimeout(function(){
+                    fn(args)
+                },delay)//fn.id,定时器的把柄
+            }
+        }
+        
+        inputA.addEventListener('keyup',function(event){
+            //如果执行的是耗时任务
+            //google suggest搜索建议 如果这个触发频率太高 服务器宕机
+            //图片懒加载 scroll+getBoundingClientRect触发的频率太高
+            //console.log(event.target.value)
+            //为什么减少触发频率? 性能,减少服务器压力
+            // 没有必要,用户的意图 单词为单位
+            ajax(event.target.value);
+        })
+        //高阶函数 将耗时函数->作为闭包的自由变量
+        //返回一个新函数 频繁执行
+        let debounceAjax = debounce(ajax,2000)
+        inputB.addEventListener('keyup',function(event){
+            debounceAjax(event.target.value)
+        })
+    </script>
+</body>
+</html>

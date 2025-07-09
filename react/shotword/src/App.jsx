@@ -56,7 +56,8 @@ function App() {
     })
     const data = await response.json();
     const replyData = JSON.parse(data.choices[0].message.content);
-    // console.log(replyData);
+    console.log(response,data)
+    console.log(replyData);
     setWord(replyData.representative_word);
     setSentence(replyData.example_sentence);
     setExplainations(replyData.explaination.split('\n'));
