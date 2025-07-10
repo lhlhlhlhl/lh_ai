@@ -102,3 +102,5 @@
 - 两个遗憾
    - ../../路径曲折  
        vite 配置alias 短路径
+   - toggle,delete 跨越组件层级有点多
+       useContext

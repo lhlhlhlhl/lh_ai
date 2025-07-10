@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>三种this绑定上下文的方法</title>
+</head>
+<body>
+    <script>
+        const person ={
+            name:'Allen',
+            
+            sayHello:function(){
+                //this丢失？
+
+                let that = this;
+            //箭头函数 不会创建自己的this 会继承父级的this 箭头函数的this是固定的 不会改变
+            //箭头函数会沿着词法作用域链向上查找this 直到找到this的值 箭头函数的this是固定的 不会改变
+            //也是闭包
+               setTimeout(()=>{
+                console.log(`Hello,my name is ${this.name}`)
+               },1000)
+             //普通函数
+              setTimeout(function(){
+                console.log(`Hello,my name is ${that.name}`)
+               },1000)
+            // bind 本质：返回一个新的函数 这个函数的this是固定的 不会改变 不会丢失this   本质还是闭包
+            setTimeout(function(){
+                console.log(`Hello,my name is ${this.name}`)
+               }.bind(this),1000)
+            }
+           
+
+        }
+        person.sayHello()
+    </script>
+</body>
+</html>

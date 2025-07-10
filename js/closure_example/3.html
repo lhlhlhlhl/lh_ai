@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>私有属性和方法的封装</title>
+</head>
+<body>
+    <script>
+    function Book(title,author,year) {
+        //对内 私有
+        //对外 公有
+        let _title = title;//_title 私有属性 以_开始的变量是私有变量 内部 提高可读性 编程风格较好
+        let _author = author;
+        let _year = year;
+        this.getTitle = function() {//getTitle 
+            return _title
+        }
+        this.getAuthor = function() {
+            return _author
+        }
+        this.getYear = function() {
+            return _year
+        }
+        
+        //私有方法 
+        function getFullTitle(){
+            return `${_title} by ${_author}`
+        }
+        this.getFullInfo = function(){
+            return `${getFullTitle()} ,published in ${year}`
+        }
+        //类的开发者，和类的使用者，可能是两拨人
+        this.updateYear = function(newYear){
+            if(typeof newYear === 'number' && newYear > 0){
+                _year = newYear;
+            }else{
+                console.error('invalid year')
+            }
+        }
+    }
+    let book = new Book('js','jack',2020)
+    console.log(book._title)//函数外部 undefined
+    console.log(book.getTitle())
+    console.log(book.getFullInfo())
+    //book._year = '1200'
+    book.updateYear(2021)
+    book.updateYear('2021')
+    console.log(book.getYear())
+    </script>
+</body>
+</html>
