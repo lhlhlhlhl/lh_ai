@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+    //一个script就是一个宏任务的开始 
+    //同步任务
+    //同步任务进入 js 调用栈（以函数为单位执行，函数是调用栈最好的执行单元）  调用栈清空-》同步代码执行完成
+    //cpu计算
+    //异步任务 耗时性的任务 把耗时性的任务放到某个地方？
+    //单线程
+    //你怎么执行一段脚本？在哪里执行？
+    
+    //1.我们的代码从一个宏任务开始执行 放到调用栈里面执行
+    //2.在调用栈里面就会遇到同步任务和异步任务
+    //3.同步任务会直接执行 异步任务会放到异步任务队列（event loop里面设计的数据结构，存储异步任务）里面
+    console.log('script start')//宏任务
+    //异步任务 定时器event，宏任务 任务队列
+    setTimeout(function(){
+        console.log('setTimeout')
+    },0)
+    //Promise.then 异步 微任务
+    Promise.resolve().then(()=>{
+        console.log('promise')
+    })
+    console.log('script end')
+    </script>
+</body>
+</html>

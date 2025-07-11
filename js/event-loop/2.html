@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>微任务</title>
+</head>
+<body>
+    <script>
+        //Promise本身是一个类，会立即执行，不是异步的，Promise里面的代码会立即执行
+        //Promise.then 异步 微任务
+        //event loop 是JS的执行机制，也是代码执行的开始
+        //html是第一个BFC(块级格式化上下文——它里面的都听他的话)，JS是第二个BFC
+        const target = document.createElement('div');//同步
+        document.body.appendChild(target);//同步
+        const observer = new MutationObserver(()=>{
+            console.log('微任务:MutationObserver')//异步
+        })
+        //监听target节点的变化
+        observer.observe(target,{
+            attributes:true,//监听属性的变化
+            childList:true,//监听子节点的变化
+        })
+        target.setAttribute('data-set','123');
+        target.setAttribute('style','background-color:green;');
+        target.appendChild(document.createElement('span'));
+
+    </script>
+</body>
+</html>

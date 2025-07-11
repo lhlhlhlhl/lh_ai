@@ -14,6 +14,10 @@
     <input type="text" id="inputB">
     <br>
     <br>
+    <h2>进行了节流</h2>
+    <input type="text" id="inputC"/>
+    <br>
+    <br>
     <script>
         let inputA = document.getElementById('inputA')
         let inputB = document.getElementById('inputB')
@@ -49,9 +53,40 @@
         })
         //高阶函数 将耗时函数->作为闭包的自由变量
         //返回一个新函数 频繁执行
-        let debounceAjax = debounce(ajax,2000)
+        let debounceAjax = debounce(ajax,500)
         inputB.addEventListener('keyup',function(event){
             debounceAjax(event.target.value)
+        })
+        let inputC = document.getElementById('inputC')
+        // const ajax = function(content){//被节流的函数 
+        //     //fetch
+        //     //XMLHttpRequest
+        //     console.log('ajax request'+content)
+        // }
+        function throttle(fn,delay){
+            let last,//上一次执行的时间
+            deferTimer;//timeout id
+            return function(...args){
+                //let args = arguments;//arguments是一个类数组对象 可以使用数组的方法
+                let that = this;//setTimeout的this指向window 会产生this丢失；但是throttle会被某个对象调用
+                let now = +new Date();//当前时间 做了一个类型的隐式转换 将字符串转成数字
+                if(last && now <last + delay){
+                    clearTimeout(deferTimer);//清除定时器
+                    deferTimer = setTimeout(function(){//重新设置定时器
+                        last = now;//更新时间
+                        //fn.call(that,args);//执行函数
+                        fn.apply(that,args)//接受一次性传入的数组
+                    },delay)
+                }else{//第一次执行
+                    last = now;
+                    fn.apply(that,args)
+                }
+            }
+        }
+        let throttleAjax = throttle(ajax,500)//throttleAjax 高阶函数，throttle通用函数
+        inputC.addEventListener('keyup',function(e){
+            //console.log(event.target.value)
+            throttleAjax(e.target.value)
         })
     </script>
 </body>

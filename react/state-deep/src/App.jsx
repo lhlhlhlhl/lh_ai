@@ -17,6 +17,11 @@ function App() {
     // setCount(count+1);
     // setCount(count+1);//这三次set的触发是同步的（同时触发闭包，拿到闭包内的count都是0），执行是异步的，结果是一样的
 
+    //setState函数式更新语法
+    //函数prev=>prev+1  参数=>返回值 上一个函数的状态（现在的状态）=》更新之后的状态
+    //保证每个更新都基于上一个最新的更新
+    //界面的更新合并
+    //分开执行了界面响应式改变
     setCount(prev=>prev+1);
     setCount(prev=>prev+1);
     setCount(prev=>prev+1);

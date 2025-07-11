@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>微任务</title>
+</head>
+<body>
+    <script>
+        console.log('同步')//宏任务
+        //批量更新
+        //DOM ,cssom,layout 树 ,图层的合并全部完成
+        queueMicrotask(()=>{//微任务队列，用来观察微任务DOM的api
+            //DOM更新了，但不是渲染完了，在渲染之前
+            //一个元素的高度 offsetHeight scrollTop getBoundingClientRect
+            //立即重绘重排，为了得到确切的位置 耗性能
+            //本来要等渲染完之后才能得到准确的位置，但是通过queueMicrotask 可以在批量更新-》渲染之前得到准确的位置
+            console.log('微任务:queueMicrotask')
+        })
+        console.log('同步结束')//宏任务
+
+    </script>
+</body>
+</html>

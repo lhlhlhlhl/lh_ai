@@ -34,7 +34,7 @@
                 }
             }
         }
-        let throttleAjax = throttle(ajax,2000)//throttleAjax 高阶函数，throttle通用函数
+        let throttleAjax = throttle(ajax,500)//throttleAjax 高阶函数，throttle通用函数
         inputC.addEventListener('keyup',function(e){
             //console.log(event.target.value)
             throttleAjax(e.target.value)
