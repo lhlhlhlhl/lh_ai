@@ -15,13 +15,6 @@ promise3.then(value=>{
     console.log(value);
 })
 setTimeout(()=>{
-    console.log('下一个宏任务');
-    const promise4 = Promise.resolve('promise4')//executor是执行器，是立即执行的
-    promise4.then(value=>{
-        console.log(value);
-    })
-},10)
-setTimeout(()=>{
     console.log('下下一个宏任务');
     const promise5 = Promise.resolve('promise5')
     promise5.then(value=>{
@@ -31,5 +24,13 @@ setTimeout(()=>{
         console.log('下下下一个宏任务');
         
     },0)
-},100)
+},0)
+setTimeout(()=>{
+    console.log('下一个宏任务');
+    const promise4 = Promise.resolve('promise4')//executor是执行器，是立即执行的
+    promise4.then(value=>{
+        console.log(value);
+    })
+},0)
+
 console.log('同步End');
