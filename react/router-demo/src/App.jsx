@@ -8,7 +8,7 @@ import About from './pages/About'
 import UserProfile from './pages/UserProfile'
 import Products from './pages/Products'
 import ProductDetails from './pages/Products/ProductDetails'
-import NewProduct from './pages/Products/NewProduct'
+import NewProduct from './pages/Products/NewProductgit push origin main'
 
 import { useState } from 'react'
 

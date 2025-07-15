@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>设计模式之单例模式</title>
+</head>
+<body>
+    <script>
+        /*
+         * Storage 本地存储类
+         * 单例模式 getInstance 静态方法
+         * @func getItem(key) 获取本地存储
+         * @func setItem(key,value) 设置本地存储
+         * @return {Object} Storage 实例
+         */
+        //为什么早期没有class
+        //函数 + prototype可以完成类  因为JS是原型式的
+        //优点：js是原型式的，很灵活，没有父子关系，优雅，简单，面向对象都不用学
+        //缺点：java,c++不能理解，es6 为了兼容，走向企业级大型项目开发，拥抱更多开发者，es6推出了class关键字
+        //如何让class只会实例化一次
+        class Storage{
+            //static instance;js是动态的，只要你使用了，js可以自动添加，不需要申明 在es6中Storage的本质是对象
+            constructor(){
+            console.log(this,'....')
+            }
+            //静态方法
+            static getInstance(){
+                //返回一个实例
+                //如果实例化过，返回之前的
+                //第一次 实例化
+                //静态属性
+                //es6 class语法糖
+                //Storage 对象 ，在函数对象上添加一个动态的属性instance
+                if(!Storage.instance){
+                    Storage.instance=new Storage();
+                }
+                return Storage.instance
+            }
+            getItem(key){
+                return localStorage.getItem(key)
+            }
+            setItem(key,value){
+                 return localStorage.setItem(key,value)   
+            }
+        }
+        //单例 性能好
+        const storage1=new Storage();
+        const storage2=new Storage();
+
+        //new 给干掉 拿到对象的实例
+        // const storage1= Storage.getInstance();//静态方法static 属于类的方法，而不是类的实例的方法public private
+        // const storage2= Storage.getInstance();
+        storage1.setItem('name','卢老板')
+        storage2.setItem('key','老板')
+        //storage1.getItem('name')
+        console.log( storage1.getItem('name'))
+        console.log( storage2.getItem('name'))
+        //两个对象都是引用类型，只有指向同一块内存空间地址，才会相等
+        //es6 class语法糖 构建类 本质还是原型式的
+        //目标，如何让storage1===storage2 变成true 单例模式
+        console.log(storage1===storage2,'~~~~~')//false
+    </script>
+</body>
+</html>
