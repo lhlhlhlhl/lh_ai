@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modal 登入弹窗单例</title>
+    <style>
+        #modal{
+            width: 200px;
+            height: 200px;
+            line-height: 200px;
+            /* 居中 */
+            position: fixed;
+            left:50%;
+            top:50%;
+            transform: translate(-50%,-50%);
+            border: 1px solid #000;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- <div class="box" style="display: none;"></div> -->
+    <button id="open">打开弹窗</button>
+    <button id="open2">打开天窗</button>
+    <button id="close">关闭弹窗</button>
+    <script>
+        //DOM
+        //推迟到登入的时刻
+        //单例
+        const Modal = (function(){
+            let modal=null//自由变量
+            return function(){
+                if(!modal){//第一次和唯一一次
+                    modal=document.createElement('div');//创建一个动态的节点
+                    modal.innerHTML='我是一个全局唯一的Modal';//设置节点的内容
+                    modal.id='modal';//设置节点的id
+                    modal.style.display='none';//点击了才会显现出来
+                    document.body.appendChild(modal);//将节点添加到body中,挂在到页面上
+                }
+                return modal;
+            }
+        })()//理解执行函数是创建闭包最便携的方式，闭包的作用域
+        //new Modal();//new的是return出来的函数，函数执行返回的是instanc
+        document.getElementById('open').addEventListener('click', function() {
+        const modal = new Modal();
+        modal.style.display = 'block';
+    })
+    document.getElementById('open2').addEventListener('click', function() {
+        const modal = new Modal();
+        modal.style.display = 'block';
+    })
+    document.getElementById('close').addEventListener('click', function() {
+        const modal = new Modal();
+        modal.style.display = 'none';//闭包的本质：提供了一种能够在外界访问变量的方式
+    })
+    </script>
+</body>
+</html>
