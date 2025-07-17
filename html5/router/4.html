@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>history SPA</title>
+</head>
+<body>
+    <h2>SPA路由模拟</h2>
+    <button onclick="navigate('/home')">首页</button>
+    <button onclick="navigate('/about')">关于</button>
+    <button onclick="navigate('/contact')">联系</button>
+    <button onclick="navigate('/login')">登入</button>
+    <!-- 不能在历史栈中新增一条，只能replace替换 -->
+    <button onclick="replace('/pay')">支付</button>
+    <a href="http://www.zhihu.com">知乎</a>
+    <div id="view">当前视图</div>
+    <script>
+        function replace(path){
+            history.replaceState({path},'',path)//替换式更新
+            render(path);
+        }
+        function render(path){
+            //根据path渲染视图
+            document.getElementById('view').innerHTML=`当前视图：${path}`;
+        }
+        function navigate(path){
+            //url 含义，持有数据状态 state
+            //入history栈，不更新
+            history.pushState({path},'',path)
+            //这是 HTML5 History API 提供的一个方法，用于修改浏览器的历史记录和地址栏 URL，而不触发页面刷新
+            render(path);
+        }
+        //监听前进/后退事件
+        window.addEventListener('popstate',(e)=>{
+            //出history栈，更新
+            console.log('pop state fired',e.state);
+            render(e.state?.path||location.pathname);
+        })
+    </script>
+</body>
+</html>
