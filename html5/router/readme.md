@@ -15,7 +15,7 @@ hash
    只有一个页面 但能带来多页面的效果
 
 ## SPA
-- Single Page Application
+- Single Page Application 单页应用
 - 只有一个页面
    - react组件
        页面级别组件
