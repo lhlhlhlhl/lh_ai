@@ -12,6 +12,9 @@ import {
  }from 'react-router-dom'
  import Loading from './components/Loading'
  const RepoList = lazy(()=>import('./pages/RepoList'))
+ const RepoDetail = lazy(()=>import('./pages/RepoDetail'))
+ const NotFound = lazy(()=>import('./pages/NotFound'))
+ const Home = lazy(()=>import('./pages/Home'))
 // import{ 
 //   getRepos,
 //   getRepoDetail
@@ -32,8 +35,11 @@ function App() {
   return (
    <Suspense fallback={<Loading/>}>
      <Routes>
+     <Route path='/' element={<Home />}/>
       <Route path='/users/:id/repos' element={<RepoList />}/>
-      <Route path='/*' element={<Navigate to="/users/shunwuyu/repos"/>}/>
+      <Route path='/users/:id/repos/:repoId' element={<RepoDetail />}/>
+      {/* <Route path='/*' element={<Navigate to="/users/shunwuyu/repos"/>}/> */}
+      <Route path='*' element={<NotFound/>}/>
      </Routes>
    </Suspense>
   )
