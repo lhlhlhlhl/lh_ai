@@ -4,7 +4,7 @@
 router routes route 路由的配置
 页面级别组件
 Link 实现单页应用
-outline 嵌套子路由
+outline 二级路由 嵌套子路由
 hash Change
 - 401 forbiden 状态码
 - 301/302 重定向
