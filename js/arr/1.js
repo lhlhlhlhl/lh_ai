@@ -9,11 +9,11 @@ const arr2 = new Array(5).fill(undefined);
 //为什么下标从0开始 方便计算偏移量
 console.log(arr2);
 arr2[8] = undefined//如果我们直接操作第九个元素，会自动扩容，中间三个为empty
-console.log(arr2);
+console.log(arr2,'~~~~~~~');
 for(let key in arr2){
-    console.log(key,arr2[key]);
+    console.log(key,arr2[key],'------');
 }
 for(let item of arr2){
-    console.log(item);
+    console.log(item,'`````');
 }
 // for key in 与 for of 区别？
