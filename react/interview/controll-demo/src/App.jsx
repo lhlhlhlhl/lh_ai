@@ -20,7 +20,7 @@ function ControlledInput({onSubmit}) {
   }
   return (
     <form onSubmit={handleSubmit}>
-      <label htmlFor="controlled-input">受控组件</label>
+      <h2 htmlFor="controlled-input">受控组件</h2>
       <input 
         type="text" 
         value={value}
@@ -41,7 +41,7 @@ function UncontrolledInput({onSubmit}) {
   }
   return (
     <form onSubmit={handleSubmit}>
-      <label htmlFor="uncontrolled-input">非受控组件</label>
+      <h2 htmlFor="uncontrolled-input">非受控组件</h2>
       <input 
       type="text"
       id='uncontrolled-input'
