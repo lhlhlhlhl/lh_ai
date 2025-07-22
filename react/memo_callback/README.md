@@ -18,4 +18,4 @@
     - 哪些就复杂渲染的子组件（props + jsx）
     - 复用，好管理之外，还可以提升性能
     - 状态更新之后组件函数要重新运行
-    - useCallback + React.memo
+    - useCallback + React.memom
