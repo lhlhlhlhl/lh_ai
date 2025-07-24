@@ -1,3 +1,7 @@
+//zustand
+//用户状态管理
+// 登入，登出，获取用户信息
+
 import {
     create
 } from 'zustand'

@@ -1,3 +1,5 @@
+//api 发送请求,向后端发送请求，也可以向mock发送请求
+
 import axios from './config'
 
 export const getUser = async () => {

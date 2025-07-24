@@ -1,4 +1,6 @@
-// login 模块的 mock
+//模拟后端，返回前端需要的本来由后端提供的token,用户信息
+
+// login 模块的 mock,模拟发送请求，生成token，进行鉴权判断
 import jwt from 'jsonwebtoken'
 //安全性 编码的时候用于加密
 // 解码的时候用于解密

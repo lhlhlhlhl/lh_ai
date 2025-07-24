@@ -1,3 +1,6 @@
+// 拦截请求,在请求头中添加token，证明身份，在响应头中获取token，证明身份
+// 拦截响应,请求结束,在响应头中获取token,证明身份
+
 import axios from 'axios'
 axios.defaults.baseURL='http://localhost:5173/api'
 
