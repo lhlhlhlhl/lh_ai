@@ -11,6 +11,8 @@ import {
 } from 'react-router-dom'
 import MainLayout from '@/components/MainLayout'
 import BlankLayout from '@/components/BlankLayout'
+import Loading from '@/components/Loading'
+
 
 const Home = lazy(() => import('@/pages/Home'))
 const Search = lazy(() => import('@/pages/Search'))
@@ -21,7 +23,7 @@ const Account = lazy(() => import('@/pages/Account'))
 function App() {
   return (
     <>
-       <Suspense fallback={<div>loading...</div>}>
+       <Suspense fallback={<Loading/>}>
             {/* 你的网站可能由多套模板 */}
             {/* 带有tabbar的Layout */}
             <Routes >
