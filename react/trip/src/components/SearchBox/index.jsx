@@ -14,6 +14,7 @@ import {
     debounce
 } from '@/utils'
 const SearchBox = (props) => {
+   
     // 子父通信 单向数据流
     const [query, setQuery] = useState('');
     const { handleQuery } = props;
