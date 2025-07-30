@@ -12,6 +12,7 @@ import {
 import MainLayout from '@/components/MainLayout'
 import BlankLayout from '@/components/BlankLayout'
 import Loading from '@/components/Loading'
+import Toast from '@/components/Toast'
 
 
 const Home = lazy(() => import('@/pages/Home'))
@@ -44,6 +45,7 @@ function App() {
               </Route>
             </Routes>
        </Suspense>
+       <Toast />
     </>
   )
 }
