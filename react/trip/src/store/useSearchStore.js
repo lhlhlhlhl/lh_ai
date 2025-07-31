@@ -21,6 +21,12 @@ const useSearchStore = create((set,get) => {
             suggestList:res.data
         })
     },
+    setSearchHistory:(history)=>{
+        localStorage.setItem('searchHistory',JSON.stringify(history))
+        set({
+            searchHistory:history
+        })
+    },
    setHotList:async()=>{
     const res = await getHotList()
     console.log(res)
