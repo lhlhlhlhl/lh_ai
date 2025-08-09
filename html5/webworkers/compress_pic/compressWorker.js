@@ -1,7 +1,7 @@
 //压缩线程
 self.onmessage = async function(e){
     const {imgData,quality=0.8} = e.data
-    // console.log(imgData,quality)
+     console.log(imgData,quality)
     try{
         // 将图片转成bitmap位图 base64->bitmap 异步
         //blob 二进制

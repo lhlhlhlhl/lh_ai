@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <button id="btn">点击我</button>
+    <button id="rmbtn1">移除事件1</button>
+    <button id="rmbtn2">移除事件2</button>
+    <script>
+        const btn = document.getElementById('btn');
+        rmbtn1.addEventListener('click',()=>{
+            btn.removeEventListener('click',callback1)
+        })
+        rmbtn2.addEventListener('click',()=>{
+            btn.removeEventListener('click',callback2)
+        })
+        const callback1 = ()=>{
+            alert('123');
+        }
+        const callback2 = ()=>{
+            alert('456');
+        }
+
+        //订阅发布者模式
+        btn.addEventListener('click',callback1)
+        btn.addEventListener('click',callback2)
+
+
+    </script>
+</body>
+</html>
