@@ -24,7 +24,7 @@ self.onmessage = async function(e){
         const compressedBlob = await canvas.convertToBlob({type:'image/jpeg',quality})
         const reader = new FileReader();
         reader.onloadend = function () {
-            // console.log(reader.result)
+             console.log(reader.result)
             self.postMessage({
                 success:true,
                 data:reader.result
