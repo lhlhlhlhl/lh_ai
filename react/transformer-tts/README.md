@@ -8,7 +8,7 @@
     - 使用transformer.js 的端模型
     - 使用tailwindcss 原子css 几乎不用写css了
         类名文档语义很好，特别适合AI生成
-        移动端适配 兼容所有设备 高效解决适配 w-full + max-w-md
+        移动端适配 兼容所有设备 高效解决适配 w-full + max-w-md 底层是mediaQuery
     - webworker nlp 任务
         1.延迟加载大模型
         2.先实现组件再实例化，有利于性能
