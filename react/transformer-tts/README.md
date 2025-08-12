@@ -20,3 +20,20 @@
     - getInstance 只实例化一次
     - 懒执行 延迟加载模型
     - Promise.all + nlp 流程的理解(tokenizer,model,vocoder)
+
+- audio 标签的url <- Object.createObjectURL(blob) <- 二进制数据位 <- ttsModel 生成 
+    <- input_id(tokenizer分词) + speaking_embeddings + vocoder(合成器) <- tokenizer + speaking
+
+    - blob是一个二进制文件，createObjectURL 根据文件返回一个本地可访问的本地浏览器的地址
+    - 大模型不负责给你全局访问的地址，开销太大了
+    - Object.createObjectURL 是一个唯一的url地址，临时访问
+    - 可以在audio标签中使用
+    - 用完后，要revokeObjectURL 释放内存
+
+- 端模型 前端智能的未来
+- 单例模式 推迟到要生成语音的时候再实例化
+    - 懒执行 延迟加载模型
+    - 只实例化一次
+    - 多次执行tts ai 业务，但是只会实例化一次，减小开销
+- Promise.all() 一次性下载全部模型
+- 在前端使用机器模型
