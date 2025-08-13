@@ -8,7 +8,4 @@ console.log(target)
 
 Object.assign(undefined,target)//报错
 const obj ={name:'张三'};
-Object.assign(target)
-
-
-
+Object.assign(obj)//源对象可以不传
