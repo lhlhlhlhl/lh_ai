@@ -12,7 +12,7 @@ const target = {
 }
 target["target"] = target; // 循环引用
 // es6 的新数据类型hash Map
-function clone(target,map = new Map()) {
+function clone(target,map = new WeakMap()) {//便于垃圾回收，弱引用关系
 
     if (typeof target === 'object') {
         let cloneTarget = Array.isArray(target)?[]:{};
