@@ -37,6 +37,9 @@
     - git commit -m '' 提交到仓库
     - git push origin main 提交到远程仓库
     - git checkout xxx 切换分支
+- 场景
+    - 回退
+        git restore
 
 
 
