@@ -12,4 +12,17 @@
     - Object.defineProperty()
     - Proxy
 
+## Git
+开发中如何使用git
+
+- 入职 git clone 公司代码
+- git config --global user.name ""
+    git config --global user.email "" 在开发环境中设置git的全局配置
+- 入职 git clone 公司代码
+    - 主分支 main/master
+        所有人都在用的，线上分支，不能轻易更改
+    - 新开一个分支
+        git checkout -b xxx 
+
+
 

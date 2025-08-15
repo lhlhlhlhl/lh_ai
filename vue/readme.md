@@ -29,13 +29,15 @@ useContext
 - ahooks
 
 - hooks 表达总线
+    - 什么是hooks
+        能够在不编写 class 的情况下，使用 React 的状态（state）和生命周期等特性。
+        Hooks 提供了一种更直观、更灵活的方式来组织和复用组件中的逻辑和响应式业务。
+        react 内置的hooks useState, useEffect 副作用等，挺好用的。
     - 内置的hook
         useState,useEffect(副作用)，useMemo（复杂计算比较好性能）,useCallback(对性能优化的理解)，
         useContext(全局数据共享),useReducer（状态管理），useRef(用于创建一个可变的引用对象)，
         useLayoutEffect(在 DOM 更新后、浏览器绘制前同步执行，适合用于需要读取 DOM 布局并同步更新的场景，以避免视觉闪烁)
-        useImperativeHandle(用于自定义暴露给父组件的实例值)
-
-
+        useImperativeHandle(用于自定义暴露给父组件的实例值)//准备与一般人想不到的
     - 自定义的hooks 
         useTitle,useTodos,useMouse,useRepos
         响应式业务、响应式场景封装到hooks目录下，复用
