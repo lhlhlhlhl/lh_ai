@@ -13,7 +13,7 @@ const {
   active, 
   all, 
   allDone 
-} = useTodo()
+} = useTodos()
 
 </script>
 

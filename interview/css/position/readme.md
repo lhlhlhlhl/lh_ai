@@ -18,7 +18,6 @@
         table 表头沾连，距离其最近的具有滚动机制的祖先容器
         和intersectionObserver 有点像，自己去观察是否到达了临界值
 
-
 - 底层
     - 定位参照系
     absolute 最近position !== static 的祖先 || body

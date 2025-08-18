@@ -73,7 +73,8 @@ class MyTextToSpeechPipeline {
 
         })
     }
-
+    
+//个音色的特征向量
     static async getSpeakerEmbeddings(speaker_id) {
         // 下载某个音色的特征向量
         const speaker_embeddings_url = `${this.BASE_URL}${speaker_id}.bin`
