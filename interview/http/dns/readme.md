@@ -39,4 +39,34 @@
 - 设备用ip地址区三次握手，建立tcp链接，使用http 请求，网页打开了
 
 - 如何做dns优化
+    dns-prefetch dns预解析
+    <link rel="dns-prefetch" href="https://www.baidu.com">
+    网络层的优化
+
+- pre-connect
+    tcp 连接提前 通道打开，多路复用
+    <link data-n-head="ssr" rel="preconnect" href="//unpkg.byted-static.com/" crossorigin="anonymous">
+
+- ping www.baidu.com
+PING www.a.shifen.com(183.2.172.177)
+  a.shifen.com 的意思
+  百度用于搜索服务的内部域名系统
+  域名 -》 IP  不是绝对的  因为访问者太多了
+  域名背后是一堆的服务器，分布式，多地的机房
+  - 负载均衡
+      挡在最前面
+      容灾、高性能
+      算法，服务器
+      当前哪些机器还有接待的能力，随机算法
+  - CDN 服务器
+      Content Delivery Network 内容分发网络
+      离用户最近的服务器，缓存内容，用户访问时，从最近的服务器获取内容
+      部署静态资源的
+      访问内容分成两部分
+      动态的，走中央数据库
+      静态的，css/js/jpg, 等静态资源，走CDN 服务器
+        双11
+      
+
+
 
