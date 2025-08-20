@@ -5,7 +5,7 @@ import {
 import './App.css'
 
 function App() {
-  //实例化
+  //实例化一个信号，然后在各种异步任务中订阅这个信号
   let controller = new AbortController();
   useEffect(() => {
     fetch('http://localhost:5173/api/banners', {
