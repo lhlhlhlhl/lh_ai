@@ -23,10 +23,20 @@
         可以不需要src
         app 应用目录
         - 目录即路由
-          AppRouter
+          AppRouter技术
           repos/page.tsx
     - api
         后端接口定义
+    - types
+        类型定义,在types目录下定义，封装
 
   RESTful 是一种基于 HTTP 协议设计的软件架构风格，后端通过定义资源的 URI，利用 HTTP 动词（如 GET、POST、PUT、DELETE）对资源进行操作，实现前后端分离和接口的统一化管理。
 
+- AppRouter
+    自动配置路由，文件夹即路由
+- layout
+    布局
+
+1.类型约束
+2.加速代码开发，代码提示
+3.减少错误

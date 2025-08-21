@@ -3,12 +3,8 @@ import {
   NextResponse // res
 } from 'next/server' //api server
 // ts 是JS的超集
-interface Todo {
-  id: number;
-  text: string;
-  completed: boolean;
+import { type Todo } from '@/app/types/todo'
 
-}
 let todos: Todo[] = [
   { id: 1, text: 'todo1', completed: false },
   { id: 2, text: 'todo2', completed: true },
@@ -34,4 +30,18 @@ export async function POST(request: Request) {
   todos.push(newTodo);
   return NextResponse.json(newTodo)
 
+}
+
+export async function PUT(request: Request) {
+  const data = await request.json()
+  todos = todos.map(todo =>
+    todo.id === data.id ? { ...todo, completed: data.completed } : todo
+
+  )
+  return NextResponse.json(todos)
+}
+export async function DELETE(request: Request) {
+  const data = await request.json()
+  todos = todos.filter(todo => todo.id !== data.id)
+  return NextResponse.json(todos)
 }
