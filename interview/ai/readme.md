@@ -1,4 +1,0 @@
-# AI
-
-- Function Call
-    
