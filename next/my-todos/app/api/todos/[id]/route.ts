@@ -5,7 +5,7 @@ import {
 
 const prisma = new PrismaClient();
 
-export async function PUT(req: Request,
+export async function PATCH(req: Request,
   { params }: { params: { id: string } }) {
   const {
     completed

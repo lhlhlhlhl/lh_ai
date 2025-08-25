@@ -41,7 +41,7 @@ export default function Home() {
   }
   const editTodo = async (id: number, completed: boolean) => {
     const res = await fetch(`/api/todos/${id}`, {
-      method: 'PUT',
+      method: 'PATCH',
       headers: {
         'Content-Type': 'application/json'
       },
