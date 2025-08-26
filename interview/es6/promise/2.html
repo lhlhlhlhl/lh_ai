@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>手写Promise.all</title>
+</head>
+
+<body>
+  <script>
+    // Promise 状态有3个 pending,fullfilled,rejected
+    // 状态只能从pending -》 fullfilled或者rejected,不能逆向转换
+
+    Promise.Myall = function (promises) {
+      let arr = []//结果数组，使用闭包
+      let count = 0//计数器，promise成功一个+1
+      return new Promise((resolved, reject) => {
+        // 当promises所有都resolved才能调用
+        // promises[i]不是promise怎么办？ 使用Promise.resolve(promises[i])包裹
+        promises.forEach((item, i) => {
+          // 解决了如果promises[i]不是promise，把他变为promise,如果本身是promise,promise.resolved也不会有什么影响
+          // 可以确保每一项都为promise
+          Promise.resolve(item).then(res => {
+            arr[i] = res
+            count++
+            if (count === promises.length) {
+              resolved(arr)
+            }
+          }).catch(err => { // 失败了，直接reject
+            reject(err)
+          })
+        })
+      })
+    }
+  </script>
+</body>
+
+</html>

@@ -107,42 +107,33 @@ el.style.transform = 'translateX(100px)'
     - 图标字体库
       减少http请求数
 ## JS执行优化
-    - 防抖节流
-    - web worker 处理复杂计算
-    - requestAnimationFrame 优化动画
-    - requestIdleCallback react fiber机制
-        schedule 机制
+- 防抖节流
+- web worker 处理复杂计算
+- requestAnimationFrame 优化动画
+- requestIdleCallback react fiber机制
+    schedule 机制
 ## 框架层优化
-    - memo,useMemo,useCallback 避免不必要的渲染
-    - shadcn-ui 按需加载组件库
-    - 合理使用key 优化列表渲染
+- memo,useMemo,useCallback 避免不必要的渲染
+- shadcn-ui 按需加载组件库
+- 合理使用key 优化列表渲染
 
 ## 缓存策略
-    - 强缓存和协商缓存
-        Expires(客户端时间不准确)/Cache-Control(时间准确)
-        LastModified  if-modified-since 时间戳 304
-        ETag if-none-match 
-    - LocalStorage/sessionStorage/cookie
+- 强缓存和协商缓存
+    Expires(客户端时间不准确)/Cache-Control(时间准确)
+    LastModified  if-modified-since 时间戳 304
+    ETag if-none-match 
+- LocalStorage/sessionStorage/cookie
 ## 网络优化
-    - CDN加速（content-delivery-nextwork）
-        静态资源资源服务器，分流，会自动缓存文件
-        多路复用 启用多域名服务器 img1.xxx.com img2.xxx.com
-        浏览器会根据域名，分配到不同的服务器上，并行加载资源，提高加载速度
-    - Gzip 内容压缩
-    - HTTP 2 多路复用
-    - DNS 预解析
+- CDN加速（content-delivery-nextwork）
+    静态资源资源服务器，分流，会自动缓存文件
+    多路复用 启用多域名服务器 img1.xxx.com img2.xxx.com
+    浏览器会根据域名，分配到不同的服务器上，并行加载资源，提高加载速度
+- Gzip 内容压缩
+- HTTP 2 多路复用
+- DNS 预解析
 
 ## 首屏优化
-    - SSR 服务器端渲染
-        组件渲染在服务器端就已经完成编译、执行，浏览器端直接显示就好
-    - 骨架屏
-    - http 2.0 server push 首屏数据推送
-
-
-
-
-    
-
-
-
-
+- SSR 服务器端渲染
+    组件渲染在服务器端就已经完成编译、执行，浏览器端直接显示就好
+- 骨架屏
+- http 2.0 server push 首屏数据推送

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    const p1 = Promise.resolve('p1')//直接fulfilled，返回了一个值为fulfilled的promise
+
+    const p2 = new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve('p2延时1s')
+      }, 1000)
+    })
+    const p3 = new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve('p3延时2s')
+      }, 2000)
+    })
+    const p4 = Promise.reject('p4 rejected')//直接rejected，返回了一个值为rejected的promise
+
+    const p5 = new Promise((resolve, reject) => {
+      setTimeout(() => {
+        reject('p5 rjected延时1s')
+      }, 1500)
+    })
+    // 并行执行 2s
+    // 如何去衡量时间？
+    console.time('Promise.all')
+    Promise.all([p1, p2, p3])
+      .then(res => {
+        console.log(res)//打印Promise.all返回的结果
+        console.timeEnd('Promise.all')
+      })
+      .catch(err => { //catch第一个失败的值
+        console.log(err)
+        console.timeEnd('Promise.all')
+      })
+
+    // Promise.all([p1, p3, p5])
+    //   .then(res => {
+    //     console.log(res)
+    //   })
+    //   .catch(err => {
+    //     console.log(err)
+    //   })
+    // Promise.all([p1, p4, p5])
+    //   .then(res => {
+    //     console.log(res)
+    //   })
+    //   .catch(err => {
+    //     console.log(err)
+    //   })
+
+    Promise.race([p4, p2, p3])
+      .then(res => {
+        console.log(res)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+    Promise.race([p5, p2, p3])
+      .then(res => {
+        console.log(res)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+    Promise.any([p4, p1, p5])
+      .then(res => {
+        console.log(res)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+    Promise.allSettled([p1, p2, p4])
+      .then(res => {
+        console.log(res)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+
+  </script>
+</body>
+
+</html>
