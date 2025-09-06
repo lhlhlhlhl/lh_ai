@@ -6,6 +6,10 @@ import {
   prisma
 } from '@/lib/db'
 import bcrypt from 'bcryptjs'
+import {
+  emailRegex,
+  passwordRegex
+} from '@/lib/regexp'
 //restful
 
 //匹配规则，符号数学
@@ -14,8 +18,6 @@ import bcrypt from 'bcryptjs'
 //@ 邮箱中必须要有的字符
 // .+@ 在@前面至少要有一个字符
 // \. 一定要有一个.  754211506@qq.com
-const emailRegex = /^.+@.+\..+$/ //RegExp
-const passwordRegex = /^(?!^\d+$)^[a-zA-Z0-9!@#$%^&*]{6,18}$/
 export async function POST(request: NextRequest) {
   try {
     const {

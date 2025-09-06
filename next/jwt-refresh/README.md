@@ -71,7 +71,7 @@
     - 200 OK  成功
     - 201 Created 成功创建
     - 400 Bad Request 客户端错误
-    - 401 Unauthorized 未授权
+    - 401 Unauthorized forbidden 未授权
     - 403 Forbidden 禁止访问
     - 404 Not Found 未找到
     - 409 Conflict 冲突
@@ -81,3 +81,47 @@
     是中间件，用于请求和响应之间执行预处理逻辑，如日志，认证，数据解析等
     中间件 配置一个白名单
     /dashboard 
+    - 配置一个需要登录的页面数组
+    - some startWith 检查路径是否以数组中的元素开头
+    - response.next() 放行
+    - response.redirect() 跳转
+
+    - 通过jwt verify方法拿到payload后，添加了自定义的请求头
+        x-user-id
+        后续页面可以拿到这个值
+- JWT的构成
+    - Header 头部
+        前面算法 HS256
+    - Payload 载荷
+        {userId:1}
+    - Signature 签名
+        secretKey 密钥
+
+- 后端安全和性能
+    - 一定要做容错处理
+        try{}catch(){}finally{}
+    - 释放数据库对象
+- prisma client 的CRUD方法
+    prisma.user.create()
+    prisma.user.findUnique()
+    prisma.user.update({
+      where:{
+        id:user.id
+      },
+      data:{
+        refreshToken
+      }
+    })
+
+- cookie
+    - httpOnly: true
+        HttpOnly 可防止JavaScript访问Cookie,有效抵御XSS 攻击导致的令牌泄漏
+        在服务器端设置
+    - SameSite
+        可防止跨站请求伪造（CSRF）攻击，限制Cookie在跨域请求中自动发送，提升安全性
+        比如你从淘宝到天猫，cookie是不会自动带上的
+
+- 后端安全和性能
+    - 一定要做容错处理
+     try{}catch(){}finally{}
+    - 释放数据库对象
