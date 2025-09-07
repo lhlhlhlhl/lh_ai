@@ -146,3 +146,52 @@
     HashWorkerIn
     HashWorkerOut
     as 断言
+    非空断言 ！  file!.size
+        ! 是 TypeScript 的非空断言操作符，用于告诉编译器“我确定这个值不是 null 或 undefined”，从而安全地访问其属性或方法。
+
+- useRef的高级使用场景
+    可变对象
+    - DOM对象
+    - 对象
+    - 值
+    AbortController 取消请求的对象，推迟到上传再实例化
+    暂停的值也使用了ref来保存
+
+- es6 特性
+    - Set 存储已经上传的分片索引
+    - ?? 空值合并操作符
+    - Promise.all并发上传
+    - Map 和 Set
+        使用Set去完成大文件切片与已经上传索引的不重复
+
+- restful api
+    - uploadChunk  PUT /api/upload/chunk  url设计
+    - 自定义请求头：这里的 headers 通过自定义请求头传递元数据（文件哈希、分片序号），使服务端能在不解析请求体的情况下快速识别分片归属和顺序，提升处理效率和可扩展性。
+        只解析请求头就可以判断是否已上传的chunk更快，避免重复上传
+         headers:{
+        'x-file-hash':hash,
+        'x-chunk-index':String(index)
+        }通过hash与chunk-index共同定位分片
+
+## 项目的难点
+- 分片上传的并发控制
+    promise.all + 递归
+    并发限流的核心是：一开始只启动不超过 MAX_CONCURRENCY 个工人函数，每个工人执行完一个任务后会递归调用 next()，继续从队列取下一个任务，从而保证始终只有固定数量的工人在运行。这样既避免了同时创建过多 Promise 占用资源，又能充分利用并行度；等所有工人都把队列清空才 resolve，Promise.all 就能精确等待整个批次完成。
+
+
+## 考点
+- process.cwd()与__dirname的区别
+项目根目录：process.cwd()为运行命令的当前工作路径，__dirname是当前文件所在目录，两者可能不同，
+前者随运行位置变化，后者固定在文件路径
+- path.join()与path.resolve()的区别
+    - path.join()
+        拼接路径，不会考虑路径是否存在，只是简单的拼接
+    - path.resolve()
+        解析路径，会考虑路径是否存在，会返回绝对路径
+        从右往左 遇到/ 就会切换到根目录，绝对路径
+    ```js
+    path.resolve('/foo/bar', '../baz')// '/foo/baz'
+    path.join('/foo/bar', '../baz')// '/foo/baz'
+    path.join('a','/b','c')// 'a/b/c'(即使/b 为绝对路径，也当普通字符串处理)
+    path.resolve('a','/b','c')// '/b/c'（遇到/b就重置）  
+    ```
