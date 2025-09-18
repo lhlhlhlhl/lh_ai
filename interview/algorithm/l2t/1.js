@@ -1,4 +1,27 @@
 // 输入是没有树状关系的
 // 组织成树状数组
+const flatList = [
+  { id: 1, parentId: null, name: 'A' },
+  { id: 2, parentId: 1, name: 'B' },
+  { id: 3, parentId: 1, name: 'C' },
+  { id: 4, parentId: 2, name: 'D' },
+  { id: 5, parentId: null, name: 'E' },
+];
+// 借助HashMap  id 查找O(1)  parentId 
 
-// 借助 hashMap id 查找O(1)
+function listToTree(list, rootId = null) {
+  const tree = [];
+  const map = new Map(); // hash 表  id 查找O(1)  parentId 
+  list.forEach(item => {
+    map.set(item.id, {
+      ...item,
+      children: []
+    })
+  })
+
+  console.log(map);
+  return tree;
+
+}
+
+listToTree(flatList);
