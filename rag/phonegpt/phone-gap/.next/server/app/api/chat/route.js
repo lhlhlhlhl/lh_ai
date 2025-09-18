@@ -1,0 +1,12 @@
+var R=require("../../../chunks/[turbopack]_runtime.js")("server/app/api/chat/route.js")
+R.c("server/chunks/2e6a7_next_dist_baae2800._.js")
+R.c("server/chunks/e8b34_@opentelemetry_api_build_esm_ddbc87db._.js")
+R.c("server/chunks/b62d7_zod-to-json-schema_dist_esm_0eeec6e4._.js")
+R.c("server/chunks/8b99c_zod_v3_b7eff62d._.js")
+R.c("server/chunks/d4947_ai_dist_index_mjs_7b506bb9._.js")
+R.c("server/chunks/72c60_@ai-sdk_openai_dist_index_mjs_639ad9f1._.js")
+R.c("server/chunks/b9f51__pnpm_996c6820._.js")
+R.c("server/chunks/[root-of-the-server]__82312081._.js")
+R.m("[project]/Desktop/lesson_si/rag/phonegpt/phone-gap/.next-internal/server/app/api/chat/route/actions.js [app-rsc] (server actions loader, ecmascript)")
+R.m("[project]/Desktop/lesson_si/rag/phonegpt/phone-gap/node_modules/.pnpm/next@15.5.3_@opentelemetry+_30ada625c4446e2a8240f82d673bcbc4/node_modules/next/dist/esm/build/templates/app-route.js { INNER_APP_ROUTE => \"[project]/Desktop/lesson_si/rag/phonegpt/phone-gap/app/api/chat/route.ts [app-route] (ecmascript)\" } [app-route] (ecmascript)")
+module.exports=R.m("[project]/Desktop/lesson_si/rag/phonegpt/phone-gap/node_modules/.pnpm/next@15.5.3_@opentelemetry+_30ada625c4446e2a8240f82d673bcbc4/node_modules/next/dist/esm/build/templates/app-route.js { INNER_APP_ROUTE => \"[project]/Desktop/lesson_si/rag/phonegpt/phone-gap/app/api/chat/route.ts [app-route] (ecmascript)\" } [app-route] (ecmascript)").exports

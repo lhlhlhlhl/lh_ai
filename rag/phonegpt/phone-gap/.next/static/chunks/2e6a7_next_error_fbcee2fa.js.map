@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 3, "column": 0}, "map": {"version":3,"sources":["file:///C:/Users/hh/Desktop/lesson_si/rag/phonegpt/phone-gap/node_modules/.pnpm/next%4015.5.3_%40opentelemetry%2B_30ada625c4446e2a8240f82d673bcbc4/node_modules/next/error.js"],"sourcesContent":["module.exports = require('./dist/pages/_error')\n"],"names":[],"mappings":"AAAA,OAAO,OAAO","ignoreList":[0],"debugId":null}}]
+}

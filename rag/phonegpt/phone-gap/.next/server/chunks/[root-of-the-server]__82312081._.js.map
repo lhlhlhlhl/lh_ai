@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 3, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"","debugId":null}},
+    {"offset": {"line": 37, "column": 0}, "map": {"version":3,"sources":["file:///C:/Users/hh/Desktop/lesson_si/rag/phonegpt/phone-gap/app/api/chat/route.ts"],"sourcesContent":["// 流式输出\r\n// AI SDK 中用于生成流式文本响应的核心函数，支持逐字输出，工具调用和异步处理\r\nimport { streamText } from 'ai';\r\n// ai-sdk openai调用方式\r\nimport { createOpenAI } from '@ai-sdk/openai';\r\nconst openai = createOpenAI({\r\n  apiKey: process.env.OPENAI_API_KEY,     // 自定义密钥\r\n  baseURL: process.env.OPENAI_API_BASE_URL, // 如使用代理或 Azure\r\n});\r\nexport async function POST() {\r\n  const result = await streamText({\r\n    model: openai('gpt-3.5-turbo'),\r\n    prompt: '你好，请简单介绍一下你自己。',\r\n  });\r\n\r\n  return result.toDataStreamResponse();\r\n}"],"names":[],"mappings":"AAAA,OAAO;AACP,2CAA2C;;;;;AAC3C;AACA,oBAAoB;AACpB;;;AACA,MAAM,SAAS,IAAA,4TAAY,EAAC;IAC1B,QAAQ,QAAQ,GAAG,CAAC,cAAc;IAClC,SAAS,QAAQ,GAAG,CAAC,mBAAmB;AAC1C;AACO,eAAe;IACpB,MAAM,SAAS,MAAM,IAAA,0TAAU,EAAC;QAC9B,OAAO,OAAO;QACd,QAAQ;IACV;IAEA,OAAO,OAAO,oBAAoB;AACpC","debugId":null}}]
+}
