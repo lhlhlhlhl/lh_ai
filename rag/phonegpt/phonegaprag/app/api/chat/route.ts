@@ -34,7 +34,7 @@ async function fetchRelevantContext(embedding: number[]) {
   
   const { data, error } = await supabase.rpc("get_relevant_chunks", {
     query_vector: embedding,
-    match_threshold: 0.2,
+    match_threshold: 0.5,
     match_count: 3
   });
   
@@ -50,6 +50,7 @@ async function fetchRelevantContext(embedding: number[]) {
   }
   
   console.log(data, '////////////////');
+  // 大模型上下文 来源，地址，内容
   return JSON.stringify(
     data.map((item:any) => `
       Source: ${item.url},
@@ -58,7 +59,7 @@ async function fetchRelevantContext(embedding: number[]) {
     `)
   )
 }
-
+// 可以改变的prompt
 const createPrompt = (context: string, userQuestion: string) => {
   return {
     role: "system",
@@ -91,6 +92,7 @@ export async function POST(req: Request) {
     const { embedding } = await generateEmbedding(latestMessage);
     // console.log(embedding);
     // 相似度计算
+    // context 为相似度计算之后的相关内容
     const context = await fetchRelevantContext(embedding);
     const prompt = createPrompt(context, latestMessage);
     console.log(prompt);
