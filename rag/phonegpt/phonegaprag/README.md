@@ -63,7 +63,7 @@
 - @ai-sdk/react 对chabot 响应式业务的封装，一行代码完成流式输出
   useChat hook 封装了chatLLM的功能，方便流式输出。
 - react-markdowen 组件，用于渲染 Markdown 文本。ai响应中 markdown 是主要的格式。
-  # - ![]() 解析
+  ### - ![]() 解析
 - tailwindcss 适配
 - react组件划分和ts 的类型约束
   shadcn 按需加载、定制性强
