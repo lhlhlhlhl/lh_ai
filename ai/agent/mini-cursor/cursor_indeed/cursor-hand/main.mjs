@@ -69,7 +69,7 @@ async function runAgentWithTools(query, maxIterations = 30) {
             console.log(`\n AI 最终回复：\n ${response.content}\n`);
             return response.content;
         }
-
+        // console.log(response)
         for (const toolCall of response.tool_calls) {
             const foundTool = tools.find(t => t.name === toolCall.name);
             if (foundTool) {

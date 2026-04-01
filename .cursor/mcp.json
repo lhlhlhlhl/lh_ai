@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "my-mcp-server": {
+      "command": "node",
+      "args": [
+        "C:\\Users\\hh\\Desktop\\xiangmu\\lesson_si\\ai\\agent\\mini-cursor\\mcp\\mcp-tool\\my-mcp-server.mjs"
+      ]
+    },
+   "amazon-mcp-server": {
+      "url": "https://mcp.amap.com/mcp?key=fc6fdee96754c61a3d55373a65fdc410"
+    }
+  }
+}

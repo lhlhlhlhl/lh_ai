@@ -1,7 +1,7 @@
 // langchain tool 工具
 import { tool } from '@langchain/core/tools';
-import fs from 'node:fs/promises';
-import path from 'node:path';
+import fs from 'node:fs/promises';// 文件系统模块
+import path from 'node:path';// 路径模块
 import {
     spawn
 } from 'node:child_process';
